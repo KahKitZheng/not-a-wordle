@@ -12,7 +12,7 @@ export default function Keyboard({ validatedGuesses }: KeyboardProps) {
   const statusByLetter = getStatusByLetter(validatedGuesses);
 
   return (
-    <div className="keyboard">
+    <div className="keyboard" style={{ marginTop: "2rem" }}>
       {ROWS.map((row, index) => (
         <div key={index} className="keyboard-row">
           {row.map((letter) => (
