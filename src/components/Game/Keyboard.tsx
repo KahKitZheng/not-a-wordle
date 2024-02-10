@@ -100,7 +100,7 @@ function KeyCap({
         setIsKeyPressed(true);
       }
     },
-    [letter]
+    [letter],
   );
 
   useEffect(() => {

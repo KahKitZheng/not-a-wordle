@@ -14,7 +14,7 @@ export default function App() {
   console.log("answer", answer);
 
   const validatedGuesses = guesses.map((guess) =>
-    checkGuess(guess, answer)
+    checkGuess(guess, answer),
   ) as Guess[][];
 
   const handleSubmit = useCallback(() => {
@@ -63,7 +63,7 @@ export default function App() {
         setCellIndex((prev) => prev + 1);
       }
     },
-    [cellIndex, gameStatus, guesses.length, handleSubmit, tentativeGuess]
+    [cellIndex, gameStatus, guesses.length, handleSubmit, tentativeGuess],
   );
 
   const handleOnClickKeyCap = useCallback(
@@ -97,7 +97,7 @@ export default function App() {
       setTentativeGuess(tentativeGuess + letter.toUpperCase());
       setCellIndex((prev) => prev + 1);
     },
-    [cellIndex, gameStatus, guesses.length, handleSubmit, tentativeGuess]
+    [cellIndex, gameStatus, guesses.length, handleSubmit, tentativeGuess],
   );
 
   useEffect(() => {
