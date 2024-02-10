@@ -1,3 +1,6 @@
+import { motion } from "framer-motion";
+import { useCallback, useEffect, useState } from "react";
+
 const ROWS = [
   ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
   ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
@@ -16,12 +19,11 @@ export default function Keyboard({ validatedGuesses }: KeyboardProps) {
       {ROWS.map((row, index) => (
         <div key={index} className="keyboard-row">
           {row.map((letter) => (
-            <div
+            <KeyCap
               key={letter}
-              className={`letter ${statusByLetter[letter] || ""}`}
-            >
-              {letter}
-            </div>
+              letter={letter}
+              status={statusByLetter[letter] || ""}
+            />
           ))}
         </div>
       ))}
@@ -69,4 +71,46 @@ function getStatusByLetter(validatedGuesses: Guess[][]) {
   });
 
   return statusObj;
+}
+
+function KeyCap({ letter, status }: { letter: string; status: string }) {
+  const [isKeyPressed, setIsKeyPressed] = useState(false);
+
+  const variants = {
+    pressed: { scale: 0.9, opacity: 0.5 },
+    notPressed: { scale: 1 },
+  };
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      const eventKey = e.key.toUpperCase();
+
+      if (letter === eventKey) {
+        setIsKeyPressed(true);
+      }
+    },
+    [letter]
+  );
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+
+    setTimeout(() => {
+      setIsKeyPressed(false);
+    }, 300);
+
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown, isKeyPressed]);
+
+  return (
+    <motion.div
+      key={letter}
+      className={`letter ${status}`}
+      variants={variants}
+      animate={isKeyPressed ? "pressed" : "notPressed"}
+      transition={{ duration: 0.3 }}
+    >
+      {letter}
+    </motion.div>
+  );
 }
