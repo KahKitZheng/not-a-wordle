@@ -96,7 +96,7 @@ function KeyCap({
     (e: KeyboardEvent) => {
       const eventKey = e.key.toUpperCase();
 
-      if (letter === eventKey) {
+      if (letter.toUpperCase() === eventKey) {
         setIsKeyPressed(true);
       }
     },
