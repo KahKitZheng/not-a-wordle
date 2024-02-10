@@ -41,8 +41,6 @@ export default function App() {
       }
 
       if (e.key === "Backspace") {
-        console.log(cellIndex, guesses.length * 5);
-
         if (cellIndex - 1 >= 0 && cellIndex - 1 >= guesses.length * 5) {
           setCellIndex((prev) => prev - 1);
           cells[cellIndex - 1].innerHTML = "";
@@ -50,7 +48,7 @@ export default function App() {
         }
       }
 
-      if (e.key === "Enter") {
+      if (e.key === "Enter" && tentativeGuess.length === 5) {
         handleSubmit();
         setTentativeGuess("");
       }
@@ -68,26 +66,39 @@ export default function App() {
     [cellIndex, gameStatus, guesses.length, handleSubmit, tentativeGuess]
   );
 
-  const clickKeyCap = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    letter: string
-  ) => {
-    const cells = document.querySelectorAll(".cell");
+  const handleOnClickKeyCap = useCallback(
+    (letter: string) => {
+      const cells = document.querySelectorAll(".cell");
 
-    e.preventDefault();
+      if (gameStatus !== "running") {
+        return;
+      }
 
-    if (gameStatus !== "running") {
-      return;
-    }
+      if (letter === "Backspace") {
+        if (cellIndex - 1 >= 0 && cellIndex - 1 >= guesses.length * 5) {
+          setCellIndex((prev) => prev - 1);
+          cells[cellIndex - 1].innerHTML = "";
+          setTentativeGuess(tentativeGuess.slice(0, -1));
+        }
+        return;
+      }
 
-    if (tentativeGuess.length === 5) {
-      return;
-    }
+      if (letter === "ENTER" && tentativeGuess.length === 5) {
+        handleSubmit();
+        setTentativeGuess("");
+        return;
+      }
 
-    cells[cellIndex].innerHTML = letter.toUpperCase();
-    setTentativeGuess(tentativeGuess + letter.toUpperCase());
-    setCellIndex((prev) => prev + 1);
-  };
+      if (tentativeGuess.length === 5) {
+        return;
+      }
+
+      cells[cellIndex].innerHTML = letter.toUpperCase();
+      setTentativeGuess(tentativeGuess + letter.toUpperCase());
+      setCellIndex((prev) => prev + 1);
+    },
+    [cellIndex, gameStatus, guesses.length, handleSubmit, tentativeGuess]
+  );
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
@@ -109,7 +120,10 @@ export default function App() {
         }}
       >
         <GuessGrid validatedGuesses={validatedGuesses} />
-        <Keyboard validatedGuesses={validatedGuesses} onClick={clickKeyCap} />
+        <Keyboard
+          validatedGuesses={validatedGuesses}
+          onClick={handleOnClickKeyCap}
+        />
       </form>
     </main>
   );

@@ -4,15 +4,12 @@ import { useCallback, useEffect, useState } from "react";
 const ROWS = [
   ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
   ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
-  ["Z", "X", "C", "V", "B", "N", "M"],
+  ["ENTER", "Z", "X", "C", "V", "B", "N", "M", "Backspace"],
 ];
 
 type KeyboardProps = {
   validatedGuesses: Guess[][];
-  onClick: (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    letter: string
-  ) => void;
+  onClick: (letter: string) => void;
 };
 
 export default function Keyboard({ validatedGuesses, onClick }: KeyboardProps) {
@@ -85,10 +82,7 @@ function KeyCap({
 }: {
   letter: string;
   status: string;
-  handleOnClick: (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    letter: string
-  ) => void;
+  handleOnClick: (letter: string) => void;
 }) {
   const [isKeyPressed, setIsKeyPressed] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
@@ -123,16 +117,19 @@ function KeyCap({
   return (
     <motion.button
       key={letter}
-      className={`letter ${status}`}
+      className={`letter ${status} ${
+        ["ENTER", "Backspace"].includes(letter) ? "wide" : ""
+      }`}
       variants={variants}
       animate={isKeyPressed || isClicked ? "pressed" : "notPressed"}
       transition={{ duration: 0.3 }}
       onClick={(e) => {
-        handleOnClick(e, letter);
+        e.preventDefault();
+        handleOnClick(letter);
         setIsClicked(true);
       }}
     >
-      {letter}
+      {letter === "Backspace" ? "⌫" : letter}
     </motion.button>
   );
 }

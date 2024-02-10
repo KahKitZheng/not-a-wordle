@@ -211,6 +211,10 @@ h1 {
   &:focus {
     outline: 0;
   }
+
+  &.wide {
+    width: 4.6rem;
+  }
 }
 
 .keyboard .letter.correct {
