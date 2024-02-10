@@ -68,6 +68,27 @@ export default function App() {
     [cellIndex, gameStatus, guesses.length, handleSubmit, tentativeGuess]
   );
 
+  const clickKeyCap = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    letter: string
+  ) => {
+    const cells = document.querySelectorAll(".cell");
+
+    e.preventDefault();
+
+    if (gameStatus !== "running") {
+      return;
+    }
+
+    if (tentativeGuess.length === 5) {
+      return;
+    }
+
+    cells[cellIndex].innerHTML = letter.toUpperCase();
+    setTentativeGuess(tentativeGuess + letter.toUpperCase());
+    setCellIndex((prev) => prev + 1);
+  };
+
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
 
@@ -88,7 +109,7 @@ export default function App() {
         }}
       >
         <GuessGrid validatedGuesses={validatedGuesses} />
-        <Keyboard validatedGuesses={validatedGuesses} />
+        <Keyboard validatedGuesses={validatedGuesses} onClick={clickKeyCap} />
       </form>
     </main>
   );

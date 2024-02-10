@@ -9,9 +9,13 @@ const ROWS = [
 
 type KeyboardProps = {
   validatedGuesses: Guess[][];
+  onClick: (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    letter: string
+  ) => void;
 };
 
-export default function Keyboard({ validatedGuesses }: KeyboardProps) {
+export default function Keyboard({ validatedGuesses, onClick }: KeyboardProps) {
   const statusByLetter = getStatusByLetter(validatedGuesses);
 
   return (
@@ -23,6 +27,7 @@ export default function Keyboard({ validatedGuesses }: KeyboardProps) {
               key={letter}
               letter={letter}
               status={statusByLetter[letter] || ""}
+              handleOnClick={onClick}
             />
           ))}
         </div>
@@ -73,8 +78,20 @@ function getStatusByLetter(validatedGuesses: Guess[][]) {
   return statusObj;
 }
 
-function KeyCap({ letter, status }: { letter: string; status: string }) {
+function KeyCap({
+  letter,
+  status,
+  handleOnClick,
+}: {
+  letter: string;
+  status: string;
+  handleOnClick: (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    letter: string
+  ) => void;
+}) {
   const [isKeyPressed, setIsKeyPressed] = useState(false);
+  const [isClicked, setIsClicked] = useState(false);
 
   const variants = {
     pressed: { scale: 0.9, opacity: 0.5 },
@@ -97,20 +114,25 @@ function KeyCap({ letter, status }: { letter: string; status: string }) {
 
     setTimeout(() => {
       setIsKeyPressed(false);
+      setIsClicked(false);
     }, 300);
 
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [handleKeyDown, isKeyPressed]);
+  }, [handleKeyDown, isKeyPressed, isClicked]);
 
   return (
-    <motion.div
+    <motion.button
       key={letter}
       className={`letter ${status}`}
       variants={variants}
-      animate={isKeyPressed ? "pressed" : "notPressed"}
+      animate={isKeyPressed || isClicked ? "pressed" : "notPressed"}
       transition={{ duration: 0.3 }}
+      onClick={(e) => {
+        handleOnClick(e, letter);
+        setIsClicked(true);
+      }}
     >
       {letter}
-    </motion.div>
+    </motion.button>
   );
 }
