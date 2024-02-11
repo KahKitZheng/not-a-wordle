@@ -1,0 +1,59 @@
+.overlay-shade {
+  display: grid;
+  place-items: center;
+  background-color: black;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0.5;
+}
+
+.game-summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  padding: 3rem 0;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  z-index: 1;
+  transform: translateY(-50%);
+  background-color: white;
+
+  .title {
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 2rem;
+    margin: 0;
+  }
+
+  .description {
+    margin: 0.5rem 0;
+  }
+
+  .button-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+
+    .close-button,
+    .next-round-button {
+      border: 1px solid black;
+      padding: 4px 12px;
+      box-shadow: 2px 2px 0 black;
+      border-radius: 4px;
+    }
+
+    .quit-button {
+      border-color: black;
+    }
+
+    .next-round-button {
+      background-color: mediumaquamarine;
+    }
+  }
+}

@@ -3,6 +3,7 @@ import GuessGrid from "../Game/GuessGrid";
 import Keyboard from "../Game/Keyboard";
 import { words } from "../../constants/words";
 import { checkGuess, getNewWord } from "../../utils";
+import GameSummary from "../Game/GameSummary/GameSummary";
 
 export default function App() {
   const [gameStatus, setGameStatus] = useState<GameStatus>("running");
@@ -164,7 +165,7 @@ export default function App() {
       </form>
 
       {gameStatus === "won" || gameStatus === "lost" ? (
-        <GameStatus
+        <GameSummary
           status={gameStatus}
           answer={answer}
           handleClose={handleClose}
@@ -172,89 +173,5 @@ export default function App() {
         />
       ) : null}
     </main>
-  );
-}
-
-function GameStatus({
-  status,
-  answer,
-  handleClose,
-  handleNextRound,
-}: {
-  status: GameStatus;
-  answer: string;
-  handleClose: () => void;
-  handleNextRound: () => void;
-}) {
-  return (
-    <>
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          height: "100%",
-          width: "100%",
-          backgroundColor: "black",
-          opacity: 0.5,
-          display: "grid",
-          placeItems: "center",
-        }}
-      ></div>
-      <div
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: 0,
-          transform: "translateY(-50%)",
-          width: "100%",
-          zIndex: 1,
-          padding: "3rem 0",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "column",
-
-          backgroundColor: "white",
-        }}
-      >
-        <p
-          style={{
-            textTransform: "uppercase",
-            fontWeight: 600,
-            fontSize: "32px",
-            margin: 0,
-          }}
-        >
-          You {status}!
-        </p>
-        <p style={{ margin: 0.5 }}>The answer was {answer}</p>
-        <div style={{ display: "flex", gap: "1rem", marginTop: "2rem" }}>
-          <button
-            style={{
-              border: "1px solid black",
-              padding: "4px 12px",
-              boxShadow: "2px 2px 0 black",
-              borderRadius: "4px",
-            }}
-            onClick={handleClose}
-          >
-            Close
-          </button>
-          <button
-            style={{
-              backgroundColor: "mediumaquamarine",
-              border: "1px solid black",
-              padding: "4px 12px",
-              boxShadow: "2px 2px 0 black",
-              borderRadius: "4px",
-            }}
-            onClick={handleNextRound}
-          >
-            Next round
-          </button>
-        </div>
-      </div>
-    </>
   );
 }
