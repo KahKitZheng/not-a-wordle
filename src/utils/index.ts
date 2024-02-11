@@ -2,7 +2,7 @@ export const getNewWord = (arr: string[]) => {
   return arr[Math.floor(Math.random() * arr.length)];
 };
 
-export function checkGuess(guess, answer) {
+export function checkGuess(guess: string, answer: string) {
   // This constant is a placeholder that indicates we've successfully
   // dealt with this character (it's correct, or misplaced).
   const SOLVED_CHAR = "✓";
