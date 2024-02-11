@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
-import "./GameKeyboard.css";
+import "./GameKeyboard.scss";
 
 const KEYBOARD_ROWS = [
   ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
