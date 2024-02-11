@@ -83,7 +83,11 @@ export default function App() {
         return;
       }
 
-      if (letter === "ENTER" && tentativeGuess.length === 5) {
+      if (letter === "ENTER") {
+        if (tentativeGuess.length !== 5) {
+          return;
+        }
+
         handleSubmit();
         setTentativeGuess("");
         return;
