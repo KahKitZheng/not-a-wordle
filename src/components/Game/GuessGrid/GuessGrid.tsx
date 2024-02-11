@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useId, useRef, useState } from "react";
-import { COLUMNS, ROWS } from "../../../constants";
+import { ANIMATION_DURATION, COLUMNS, ROWS } from "../../../constants";
 import "./GuessGrid.scss";
 
 type GuessGridProps = {
@@ -53,15 +53,13 @@ function Cell(props: CellProps) {
   const id = useId();
   const cellRef = useRef<HTMLSpanElement>(null);
 
-  const duration = 300;
-
   useEffect(() => {
     const element = document.getElementById(id);
     const observer = new MutationObserver(function (mutations) {
       mutations.forEach(function (mutation) {
         if (mutation.type === "childList") {
           setIsAnimating(true);
-          setTimeout(() => setIsAnimating(false), duration);
+          setTimeout(() => setIsAnimating(false), ANIMATION_DURATION);
         }
       });
     });
@@ -84,7 +82,7 @@ function Cell(props: CellProps) {
       }
 
       cellRef.current.className = `cell ${status ? status : ""} ${isSubmitting ? "flip" : ""}`;
-    }, duration * index);
+    }, ANIMATION_DURATION * index);
   }, [index, isSubmitting, status]);
 
   return (
@@ -95,7 +93,7 @@ function Cell(props: CellProps) {
       animate={{ scale: isAnimating ? 1.1 : 1 }}
       transition={{
         type: "spring",
-        duration: duration / 1000,
+        duration: ANIMATION_DURATION / 1000,
         damping: 8,
         mass: 0.25,
         bounce: 0.5,

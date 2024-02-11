@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { ANIMATION_DURATION, COLUMNS } from "../../../constants";
 import "./GameKeyboard.scss";
 
 const KEYBOARD_ROWS = [
@@ -116,7 +117,7 @@ function KeyCap(props: KeyCapProps) {
     setTimeout(() => {
       setIsKeyPressed(false);
       setIsClicked(false);
-    }, 300);
+    }, ANIMATION_DURATION);
 
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown, isKeyPressed, isClicked]);
@@ -130,7 +131,7 @@ function KeyCap(props: KeyCapProps) {
       keyCapRef.current.className = `letter ${status} ${
         ["ENTER", "Backspace"].includes(letter) ? "wide" : ""
       } ${letter === "" ? "empty" : ""}`;
-    }, 1500);
+    }, ANIMATION_DURATION * COLUMNS);
   }, [letter, status]);
 
   return (
@@ -142,7 +143,7 @@ function KeyCap(props: KeyCapProps) {
       } ${letter === "" ? "empty" : ""}`}
       variants={variants}
       animate={isKeyPressed || isClicked ? "pressed" : "notPressed"}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: ANIMATION_DURATION / 1000 }}
       onClick={handleOnClick}
     >
       {letter === "Backspace" ? "⌫" : letter}
