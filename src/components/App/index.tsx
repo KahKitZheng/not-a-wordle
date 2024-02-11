@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import GuessGrid from "../Game/GuessGrid/GuessGrid";
-import Keyboard from "../Game/Keyboard";
+import GameKeyboard from "../Game/GameKeyboard/GameKeyboard";
 import { words } from "../../constants/words";
 import { checkGuess, getNewWord } from "../../utils";
 import GameSummary from "../Game/GameSummary/GameSummary";
@@ -157,10 +157,10 @@ export default function App() {
         }}
       >
         <GuessGrid key={`grid-${answer}`} validatedGuesses={validatedGuesses} />
-        <Keyboard
+        <GameKeyboard
           key={`keyboard-${answer}`}
           validatedGuesses={validatedGuesses}
-          onClick={handleOnClickKeyCap}
+          handleKeyClick={handleOnClickKeyCap}
         />
       </form>
 

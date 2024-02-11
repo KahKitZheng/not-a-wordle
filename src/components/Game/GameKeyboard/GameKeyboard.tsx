@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
+import "./GameKeyboard.css";
 
-const ROWS = [
+const KEYBOARD_ROWS = [
   ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
   ["", "A", "S", "D", "F", "G", "H", "J", "K", "L", ""],
   ["ENTER", "Z", "X", "C", "V", "B", "N", "M", "Backspace"],
@@ -9,22 +10,62 @@ const ROWS = [
 
 type KeyboardProps = {
   validatedGuesses: Guess[][];
-  onClick: (letter: string) => void;
+  handleKeyClick: (letter: string) => void;
 };
 
-export default function Keyboard({ validatedGuesses, onClick }: KeyboardProps) {
+export default function GameKeyboard(props: KeyboardProps) {
+  const { validatedGuesses, handleKeyClick } = props;
   const statusByLetter = getStatusByLetter(validatedGuesses);
+
+  function getStatusByLetter(validatedGuesses: Guess[][]) {
+    const statusObj: Record<string, string> = {};
+    const allLetters = validatedGuesses.flat();
+
+    allLetters.forEach(({ letter, status }: Guess) => {
+      if (letter === undefined || status === undefined) {
+        return;
+      }
+
+      const currentStatus = statusObj[letter];
+
+      if (currentStatus === undefined) {
+        statusObj[letter] = status;
+        return;
+      }
+
+      // The same letter might have multiple matched statuses.
+      // For example, if the answer is "APPLE" and the user guesses
+      // "PAPER", then the letter "P" is misplaced (for the first P)
+      // and correct (for the second P).
+      //
+      // We want to prioritize the statuses in this order:
+      const STATUS_RANKS: Record<string, number> = {
+        correct: 1,
+        misplaced: 2,
+        incorrect: 3,
+      };
+
+      const currentStatusRank = STATUS_RANKS[currentStatus];
+      const newStatusRank = STATUS_RANKS[status];
+
+      if (newStatusRank < currentStatusRank) {
+        statusObj[letter] = status;
+      }
+    });
+
+    return statusObj;
+  }
 
   return (
     <div className="keyboard">
-      {ROWS.map((row, index) => (
+      {KEYBOARD_ROWS.map((row, index) => (
         <div key={index} className="keyboard-row">
           {row.map((letter, index) => (
             <KeyCap
               key={`${letter}-${index}`}
               letter={letter}
               status={statusByLetter[letter] || ""}
-              handleOnClick={onClick}
+              handleKeyClick={handleKeyClick}
             />
           ))}
         </div>
@@ -33,57 +74,15 @@ export default function Keyboard({ validatedGuesses, onClick }: KeyboardProps) {
   );
 }
 
-function getStatusByLetter(validatedGuesses: Guess[][]) {
-  const statusObj: Record<string, string> = {};
-  // `.flat()` is a method that flattens nested arrays.
-  // Here it produces an array containing all of the letter/status
-  // objects for each guess.
-  const allLetters = validatedGuesses.flat();
-
-  allLetters.forEach(({ letter, status }: Guess) => {
-    if (letter === undefined || status === undefined) {
-      return;
-    }
-
-    const currentStatus = statusObj[letter];
-
-    if (currentStatus === undefined) {
-      statusObj[letter] = status;
-      return;
-    }
-
-    // The same letter might have multiple matched statuses.
-    // For example, if the answer is "APPLE" and the user guesses
-    // "PAPER", then the letter "P" is misplaced (for the first P)
-    // and correct (for the second P).
-    //
-    // We want to prioritize the statuses in this order:
-    const STATUS_RANKS: Record<string, number> = {
-      correct: 1,
-      misplaced: 2,
-      incorrect: 3,
-    };
-
-    const currentStatusRank = STATUS_RANKS[currentStatus];
-    const newStatusRank = STATUS_RANKS[status];
-
-    if (newStatusRank < currentStatusRank) {
-      statusObj[letter] = status;
-    }
-  });
-
-  return statusObj;
-}
-
-function KeyCap({
-  letter,
-  status,
-  handleOnClick,
-}: {
+type KeyCapProps = {
   letter: string;
   status: string;
-  handleOnClick: (letter: string) => void;
-}) {
+  handleKeyClick: (letter: string) => void;
+};
+
+function KeyCap(props: KeyCapProps) {
+  const { letter, status, handleKeyClick } = props;
+
   const [isKeyPressed, setIsKeyPressed] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
 
@@ -104,6 +103,12 @@ function KeyCap({
     },
     [letter],
   );
+
+  function handleOnClick(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    handleKeyClick(letter);
+    setIsClicked(true);
+  }
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
@@ -138,11 +143,7 @@ function KeyCap({
       variants={variants}
       animate={isKeyPressed || isClicked ? "pressed" : "notPressed"}
       transition={{ duration: 0.3 }}
-      onClick={(e) => {
-        e.preventDefault();
-        handleOnClick(letter);
-        setIsClicked(true);
-      }}
+      onClick={handleOnClick}
     >
       {letter === "Backspace" ? "⌫" : letter}
     </motion.button>
