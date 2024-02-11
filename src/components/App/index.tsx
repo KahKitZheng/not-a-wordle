@@ -1,9 +1,10 @@
+import { words } from "../../constants/words";
+import { checkGuess, getNewWord } from "../../utils";
 import { useCallback, useEffect, useState } from "react";
 import GuessGrid from "../Game/GuessGrid/GuessGrid";
 import GameKeyboard from "../Game/GameKeyboard/GameKeyboard";
-import { words } from "../../constants/words";
-import { checkGuess, getNewWord } from "../../utils";
 import GameSummary from "../Game/GameSummary/GameSummary";
+import "./App.scss";
 
 export default function App() {
   const [gameStatus, setGameStatus] = useState<GameStatus>("running");
@@ -134,28 +135,8 @@ export default function App() {
   }, [handleKeyDown]);
 
   return (
-    <main
-      style={{
-        gap: "2rem",
-        position: "relative",
-        height: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "column",
-          width: "100%",
-          gap: "2rem",
-          padding: "1rem",
-        }}
-      >
+    <main className="game-wrapper">
+      <form onSubmit={handleSubmit} className="game-form">
         <GuessGrid key={`grid-${answer}`} validatedGuesses={validatedGuesses} />
         <GameKeyboard
           key={`keyboard-${answer}`}
