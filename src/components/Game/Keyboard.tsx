@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const ROWS = [
   ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
@@ -87,6 +87,8 @@ function KeyCap({
   const [isKeyPressed, setIsKeyPressed] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
 
+  const keyCapRef = useRef<HTMLButtonElement>(null);
+
   const variants = {
     pressed: { scale: 0.9, opacity: 0.5 },
     notPressed: { scale: 1 },
@@ -114,12 +116,23 @@ function KeyCap({
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown, isKeyPressed, isClicked]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      if (!keyCapRef.current) {
+        return;
+      }
+
+      keyCapRef.current.className = `letter ${status} ${
+        ["ENTER", "Backspace"].includes(letter) ? "wide" : ""
+      }`;
+    }, 1500);
+  }, [letter, status]);
+
   return (
     <motion.button
       key={letter}
-      className={`letter ${status} ${
-        ["ENTER", "Backspace"].includes(letter) ? "wide" : ""
-      }`}
+      ref={keyCapRef}
+      className="letter"
       variants={variants}
       animate={isKeyPressed || isClicked ? "pressed" : "notPressed"}
       transition={{ duration: 0.3 }}
