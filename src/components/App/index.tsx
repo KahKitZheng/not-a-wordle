@@ -158,16 +158,15 @@ export default function App() {
             handleKeyClick={handleOnClickKeyCap}
           />
         </form>
-
-        {gameStatus === GAME_STATUS.WON || gameStatus === GAME_STATUS.LOST ? (
-          <GameSummary
-            status={gameStatus}
-            answer={answer}
-            handleClose={handleClose}
-            handleNextRound={handleNextRound}
-          />
-        ) : null}
       </main>
+      {gameStatus === GAME_STATUS.WON || gameStatus === GAME_STATUS.LOST ? (
+        <GameSummary
+          status={gameStatus}
+          answer={answer}
+          handleClose={handleClose}
+          handleNextRound={handleNextRound}
+        />
+      ) : null}
     </>
   );
 }
