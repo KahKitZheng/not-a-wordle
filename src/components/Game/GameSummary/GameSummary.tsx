@@ -7,7 +7,7 @@ type GameStatusProps = {
   handleNextRound: () => void;
 };
 
-export default function GameStatus(props: GameStatusProps) {
+export default function GameSummary(props: GameStatusProps) {
   const { status, answer, handleClose, handleNextRound } = props;
 
   return (
