@@ -1,4 +1,10 @@
 import { words } from "../../constants/words";
+import {
+  ANIMATION_DURATION,
+  COLUMNS,
+  GAME_STATUS,
+  ROWS,
+} from "../../constants";
 import { checkGuess, getNewWord } from "../../utils";
 import { useCallback, useEffect, useState } from "react";
 import GuessGrid from "../Game/GuessGrid/GuessGrid";
@@ -7,7 +13,7 @@ import GameSummary from "../Game/GameSummary/GameSummary";
 import "./App.scss";
 
 export default function App() {
-  const [gameStatus, setGameStatus] = useState<GameStatus>("running");
+  const [gameStatus, setGameStatus] = useState<GameStatus>(GAME_STATUS.RUNNING);
   const [guesses, setGuesses] = useState<string[]>([]);
   const [tentativeGuess, setTentativeGuess] = useState("");
   const [answer, setAnswer] = useState(() => getNewWord(words));
@@ -25,13 +31,15 @@ export default function App() {
     setGuesses(nextGuesses);
 
     if (tentativeGuess.toUpperCase() === answer) {
-      setTimeout(() => {
-        setGameStatus("won");
-      }, 1500);
-    } else if (nextGuesses.length >= 6) {
-      setTimeout(() => {
-        setGameStatus("lost");
-      }, 1500);
+      setTimeout(
+        () => setGameStatus(GAME_STATUS.WON),
+        ANIMATION_DURATION * COLUMNS,
+      );
+    } else if (nextGuesses.length >= ROWS) {
+      setTimeout(
+        () => setGameStatus(GAME_STATUS.LOST),
+        ANIMATION_DURATION * COLUMNS,
+      );
     }
   }, [answer, guesses, tentativeGuess]);
 
@@ -46,24 +54,24 @@ export default function App() {
         return;
       }
 
-      if (gameStatus !== "running") {
+      if (gameStatus !== GAME_STATUS.RUNNING) {
         return;
       }
 
       if (e.key === "Backspace") {
-        if (cellIndex - 1 >= 0 && cellIndex - 1 >= guesses.length * 5) {
+        if (cellIndex - 1 >= 0 && cellIndex - 1 >= guesses.length * COLUMNS) {
           setCellIndex((prev) => prev - 1);
           cells[cellIndex - 1].innerHTML = "";
           setTentativeGuess(tentativeGuess.slice(0, -1));
         }
       }
 
-      if (e.key === "Enter" && tentativeGuess.length === 5) {
+      if (e.key === "Enter" && tentativeGuess.length === COLUMNS) {
         handleSubmit();
         setTentativeGuess("");
       }
 
-      if (tentativeGuess.length === 5) {
+      if (tentativeGuess.length === COLUMNS) {
         return;
       }
 
@@ -80,12 +88,12 @@ export default function App() {
     (letter: string) => {
       const cells = document.querySelectorAll(".cell");
 
-      if (gameStatus !== "running") {
+      if (gameStatus !== GAME_STATUS.RUNNING) {
         return;
       }
 
       if (letter === "Backspace") {
-        if (cellIndex - 1 >= 0 && cellIndex - 1 >= guesses.length * 5) {
+        if (cellIndex - 1 >= 0 && cellIndex - 1 >= guesses.length * COLUMNS) {
           setCellIndex((prev) => prev - 1);
           cells[cellIndex - 1].innerHTML = "";
           setTentativeGuess(tentativeGuess.slice(0, -1));
@@ -94,7 +102,7 @@ export default function App() {
       }
 
       if (letter === "ENTER") {
-        if (tentativeGuess.length !== 5) {
+        if (tentativeGuess.length !== COLUMNS) {
           return;
         }
 
@@ -103,7 +111,7 @@ export default function App() {
         return;
       }
 
-      if (tentativeGuess.length === 5) {
+      if (tentativeGuess.length === COLUMNS) {
         return;
       }
 
@@ -115,7 +123,7 @@ export default function App() {
   );
 
   const handleClose = () => {
-    setGameStatus("idle");
+    setGameStatus(GAME_STATUS.IDLE);
   };
 
   const handleNextRound = () => {
@@ -123,15 +131,12 @@ export default function App() {
     setGuesses([]);
     setTentativeGuess("");
     setCellIndex(0);
-    setGameStatus("running");
+    setGameStatus(GAME_STATUS.RUNNING);
   };
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
   return (
@@ -145,7 +150,7 @@ export default function App() {
         />
       </form>
 
-      {gameStatus === "won" || gameStatus === "lost" ? (
+      {gameStatus === GAME_STATUS.WON || gameStatus === GAME_STATUS.LOST ? (
         <GameSummary
           status={gameStatus}
           answer={answer}
