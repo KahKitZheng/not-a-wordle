@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useEffect, useId, useRef, useState } from "react";
 
 type GuessGridProps = {
@@ -80,22 +80,20 @@ function Cell({ letter, status, index }: Guess & { index: number }) {
   }, [index, isSubmitting, status]);
 
   return (
-    <AnimatePresence mode="wait">
-      <motion.span
-        id={id}
-        ref={cellRef}
-        className="cell"
-        animate={{ scale: isAnimating ? 1.1 : 1 }}
-        transition={{
-          type: "spring",
-          duration: duration / 1000,
-          damping: 8,
-          mass: 0.25,
-          bounce: 0.5,
-        }}
-      >
-        {letter}
-      </motion.span>
-    </AnimatePresence>
+    <motion.span
+      id={id}
+      ref={cellRef}
+      className="cell"
+      animate={{ scale: isAnimating ? 1.1 : 1 }}
+      transition={{
+        type: "spring",
+        duration: duration / 1000,
+        damping: 8,
+        mass: 0.25,
+        bounce: 0.5,
+      }}
+    >
+      {letter}
+    </motion.span>
   );
 }

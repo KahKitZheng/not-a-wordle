@@ -1,4 +1,4 @@
-type GameStatus = "running" | "won" | "lost";
+type GameStatus = "running" | "won" | "lost" | "idle";
 
 type Guess = {
   letter?: string;

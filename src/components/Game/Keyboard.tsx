@@ -16,12 +16,12 @@ export default function Keyboard({ validatedGuesses, onClick }: KeyboardProps) {
   const statusByLetter = getStatusByLetter(validatedGuesses);
 
   return (
-    <div className="keyboard" style={{ marginTop: "2rem" }}>
+    <div className="keyboard">
       {ROWS.map((row, index) => (
         <div key={index} className="keyboard-row">
-          {row.map((letter) => (
+          {row.map((letter, index) => (
             <KeyCap
-              key={letter}
+              key={`${letter}-${index}`}
               letter={letter}
               status={statusByLetter[letter] || ""}
               handleOnClick={onClick}
