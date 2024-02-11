@@ -125,6 +125,7 @@ export default function App() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
+          width: "100%",
         }}
       >
         <GuessGrid validatedGuesses={validatedGuesses} />

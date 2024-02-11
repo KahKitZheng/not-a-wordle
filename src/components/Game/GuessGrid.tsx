@@ -7,7 +7,7 @@ type GuessGridProps = {
 
 export default function GuessGrid({ validatedGuesses }: GuessGridProps) {
   return (
-    <div className="guess-results" style={{ maxWidth: "400px" }}>
+    <div className="guess-results">
       {Array.from({ length: 6 }).map((_, index) => (
         <Guess key={index} value={validatedGuesses[index]} />
       ))}
