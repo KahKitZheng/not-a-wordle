@@ -19,7 +19,9 @@ export default function App() {
   const [answer, setAnswer] = useState(() => getNewWord(words));
   const [cellIndex, setCellIndex] = useState(0);
 
-  console.log("answer", answer);
+  useEffect(() => {
+    console.log("answer", answer);
+  }, [answer]);
 
   const validatedGuesses = guesses.map((guess) =>
     checkGuess(guess, answer),
