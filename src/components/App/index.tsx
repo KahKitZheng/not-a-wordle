@@ -36,6 +36,10 @@ export default function App() {
       const keyPress = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
       const eventKey = e.key.toUpperCase();
 
+      if (e.metaKey) {
+        return;
+      }
+
       if (gameStatus !== "running") {
         return;
       }
