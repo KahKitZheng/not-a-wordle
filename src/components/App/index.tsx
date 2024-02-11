@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import GuessGrid from "../Game/GuessGrid";
+import GuessGrid from "../Game/GuessGrid/GuessGrid";
 import Keyboard from "../Game/Keyboard";
 import { words } from "../../constants/words";
 import { checkGuess, getNewWord } from "../../utils";

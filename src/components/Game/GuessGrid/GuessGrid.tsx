@@ -1,14 +1,18 @@
 import { motion } from "framer-motion";
 import { useEffect, useId, useRef, useState } from "react";
+import { COLUMNS, ROWS } from "../../../constants";
+import "./GuessGrid.scss";
 
 type GuessGridProps = {
   validatedGuesses: Guess[][];
 };
 
-export default function GuessGrid({ validatedGuesses }: GuessGridProps) {
+export default function GuessGrid(props: GuessGridProps) {
+  const { validatedGuesses } = props;
+
   return (
     <div className="guess-results">
-      {Array.from({ length: 6 }).map((_, index) => (
+      {Array.from({ length: ROWS }).map((_, index) => (
         <Guess key={index} value={validatedGuesses[index]} />
       ))}
     </div>
@@ -19,10 +23,12 @@ type GuessProps = {
   value: Guess[];
 };
 
-function Guess({ value }: GuessProps) {
+function Guess(props: GuessProps) {
+  const { value } = props;
+
   return (
-    <p className="guess" style={{ pointerEvents: "none" }}>
-      {Array.from({ length: 5 }).map((_, index) => (
+    <p className="guess">
+      {Array.from({ length: COLUMNS }).map((_, index) => (
         <Cell
           key={index}
           index={index}
@@ -34,14 +40,20 @@ function Guess({ value }: GuessProps) {
   );
 }
 
-function Cell({ letter, status, index }: Guess & { index: number }) {
+type CellProps = Guess & {
+  index: number;
+};
+
+function Cell(props: CellProps) {
+  const { letter, status, index } = props;
+
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const id = useId();
   const cellRef = useRef<HTMLSpanElement>(null);
 
   const duration = 300;
-
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const element = document.getElementById(id);
@@ -49,18 +61,14 @@ function Cell({ letter, status, index }: Guess & { index: number }) {
       mutations.forEach(function (mutation) {
         if (mutation.type === "childList") {
           setIsAnimating(true);
-          setTimeout(() => {
-            setIsAnimating(false);
-          }, duration);
+          setTimeout(() => setIsAnimating(false), duration);
         }
       });
     });
 
     element && observer.observe(element, { childList: true, subtree: true });
 
-    return () => {
-      observer.disconnect();
-    };
+    return () => observer.disconnect();
   }, [id]);
 
   useEffect(() => {

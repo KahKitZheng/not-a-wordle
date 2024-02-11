@@ -1,0 +1,77 @@
+.guess-results {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  max-width: 375px;
+}
+
+.guess {
+  display: flex;
+  gap: 4px;
+  margin: 0;
+  pointer-events: none;
+
+  /*
+    Round the corners for the 4 cells at the very corners of
+    the game board
+  */
+  &:first-of-type .cell:first-of-type {
+    --radius: 4px 0px 0px 0px;
+  }
+  &:first-of-type .cell:last-of-type {
+    --radius: 0px 4px 0px 0px;
+  }
+  &:last-of-type .cell:last-of-type {
+    --radius: 0px 0px 4px 0px;
+  }
+  &:last-of-type .cell:first-of-type {
+    --radius: 0px 0px 0px 4px;
+  }
+}
+
+.cell {
+  display: grid;
+  place-content: center;
+  flex: 1;
+  border: 2px solid var(--color-gray-700);
+  border-radius: var(--radius);
+  font-size: 2rem;
+  text-align: center;
+  text-transform: uppercase;
+  position: relative;
+  aspect-ratio: 1 / 1;
+
+  &.flip {
+    animation: flip 0.3s linear forwards;
+  }
+
+  &.correct {
+    background: var(--color-success);
+    border-color: var(--color-success);
+    color: white;
+  }
+
+  &.incorrect {
+    background: var(--color-gray-300);
+    border-color: var(--color-gray-300);
+    color: white;
+  }
+
+  &.misplaced {
+    background: var(--color-warning);
+    border-color: var(--color-warning);
+    color: white;
+  }
+}
+
+@keyframes flip {
+  from {
+    transform: rotateX(0deg);
+  }
+  to {
+    transform: rotateX(180deg) scaleY(-1);
+  }
+}
