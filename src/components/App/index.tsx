@@ -140,24 +140,32 @@ export default function App() {
   }, [handleKeyDown]);
 
   return (
-    <main className="game-wrapper">
-      <form onSubmit={handleSubmit} className="game-form">
-        <GuessGrid key={`grid-${answer}`} validatedGuesses={validatedGuesses} />
-        <GameKeyboard
-          key={`keyboard-${answer}`}
-          validatedGuesses={validatedGuesses}
-          handleKeyClick={handleOnClickKeyCap}
-        />
-      </form>
+    <>
+      <header className="logo-wrapper">
+        <h1 className="logo">Wordle clone</h1>
+      </header>
+      <main className="game-wrapper">
+        <form onSubmit={handleSubmit} className="game-form">
+          <GuessGrid
+            key={`grid-${answer}`}
+            validatedGuesses={validatedGuesses}
+          />
+          <GameKeyboard
+            key={`keyboard-${answer}`}
+            validatedGuesses={validatedGuesses}
+            handleKeyClick={handleOnClickKeyCap}
+          />
+        </form>
 
-      {gameStatus === GAME_STATUS.WON || gameStatus === GAME_STATUS.LOST ? (
-        <GameSummary
-          status={gameStatus}
-          answer={answer}
-          handleClose={handleClose}
-          handleNextRound={handleNextRound}
-        />
-      ) : null}
-    </main>
+        {gameStatus === GAME_STATUS.WON || gameStatus === GAME_STATUS.LOST ? (
+          <GameSummary
+            status={gameStatus}
+            answer={answer}
+            handleClose={handleClose}
+            handleNextRound={handleNextRound}
+          />
+        ) : null}
+      </main>
+    </>
   );
 }

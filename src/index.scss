@@ -11,7 +11,6 @@
 
 html {
   --game-spacing: 32px;
-  --header-height: 4rem;
 
   --color-success: hsl(150deg 70% 30%);
   --color-warning: hsl(50deg 100% 30%);
@@ -38,6 +37,8 @@ body {
 }
 
 #root {
+  display: flex;
+  flex-direction: column;
   height: 100%;
   width: 100%;
   text-align: center;
@@ -51,47 +52,4 @@ button {
   cursor: pointer;
   text-align: left;
   color: inherit;
-}
-
-.wrapper {
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
-}
-
-header {
-  display: flex;
-  height: var(--header-height);
-  border-bottom: 1px solid var(--color-gray-700);
-  color: var(--color-gray-300);
-}
-
-header .side {
-  width: var(--header-height);
-  display: grid;
-  place-content: center;
-}
-
-h1 {
-  flex: 1;
-  font-size: 2rem;
-  line-height: var(--header-height);
-  text-align: center;
-}
-
-@media (max-width: 25rem) {
-  h1 {
-    font-size: 1.25rem;
-  }
-}
-
-.game-wrapper {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: var(--game-spacing);
-  padding: var(--game-spacing) 32px;
-  margin: 0 auto;
-  min-width: 250px;
-  max-width: min(500px, 58vh, 100%);
 }
