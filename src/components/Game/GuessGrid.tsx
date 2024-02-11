@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
-import { useCallback, useEffect, useId, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useId, useRef, useState } from "react";
 
 type GuessGridProps = {
   validatedGuesses: Guess[][];
@@ -36,6 +36,7 @@ function Guess({ value }: GuessProps) {
 
 function Cell({ letter, status, index }: Guess & { index: number }) {
   const id = useId();
+  const cellRef = useRef<HTMLSpanElement>(null);
 
   const duration = 300;
 
@@ -68,23 +69,33 @@ function Cell({ letter, status, index }: Guess & { index: number }) {
     }
   }, [letter, status]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      if (!cellRef.current) {
+        return;
+      }
+
+      cellRef.current.className = `cell ${status ? status : ""} ${isSubmitting ? "flip" : ""}`;
+    }, duration * index);
+  }, [index, isSubmitting, status]);
+
   return (
-    <motion.span
-      id={id}
-      className={`${status ? `cell ${status}` : "cell"} ${isSubmitting ? "flip" : ""}`}
-      style={{ animationDelay: isSubmitting ? `${index * 0.25}s` : "0" }}
-      animate={{
-        scale: isAnimating ? 1.1 : 1,
-      }}
-      transition={{
-        type: "spring",
-        duration: duration / 1000,
-        damping: 8,
-        mass: 0.25,
-        bounce: 0.5,
-      }}
-    >
-      {letter}
-    </motion.span>
+    <AnimatePresence mode="wait">
+      <motion.span
+        id={id}
+        ref={cellRef}
+        className="cell"
+        animate={{ scale: isAnimating ? 1.1 : 1 }}
+        transition={{
+          type: "spring",
+          duration: duration / 1000,
+          damping: 8,
+          mass: 0.25,
+          bounce: 0.5,
+        }}
+      >
+        {letter}
+      </motion.span>
+    </AnimatePresence>
   );
 }

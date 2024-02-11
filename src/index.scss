@@ -133,6 +133,24 @@ h1 {
   &.flip {
     animation: flip 0.3s linear forwards;
   }
+
+  &.correct {
+    background: var(--color-success);
+    border-color: var(--color-success);
+    color: white;
+  }
+
+  &.incorrect {
+    background: var(--color-gray-300);
+    border-color: var(--color-gray-300);
+    color: white;
+  }
+
+  &.misplaced {
+    background: var(--color-warning);
+    border-color: var(--color-warning);
+    color: white;
+  }
 }
 
 /*
@@ -150,22 +168,6 @@ h1 {
 }
 .guess:last-of-type .cell:first-of-type {
   --radius: 0px 0px 0px 4px;
-}
-
-.cell.correct {
-  background: var(--color-success);
-  border-color: var(--color-success);
-  color: white;
-}
-.cell.incorrect {
-  background: var(--color-gray-300);
-  border-color: var(--color-gray-300);
-  color: white;
-}
-.cell.misplaced {
-  background: var(--color-warning);
-  border-color: var(--color-warning);
-  color: white;
 }
 
 .guess-input-wrapper {
