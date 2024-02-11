@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useEffect, useId, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 
 type GuessGridProps = {
   validatedGuesses: Guess[][];
@@ -25,6 +25,7 @@ function Guess({ value }: GuessProps) {
       {Array.from({ length: 5 }).map((_, index) => (
         <Cell
           key={index}
+          index={index}
           letter={value ? value[index].letter : undefined}
           status={value ? value[index].status : undefined}
         />
@@ -33,13 +34,13 @@ function Guess({ value }: GuessProps) {
   );
 }
 
-function Cell({ letter, status }: Guess) {
+function Cell({ letter, status, index }: Guess & { index: number }) {
   const id = useId();
-  const className = status ? `cell ${status}` : "cell";
 
-  const duration = 100;
+  const duration = 300;
 
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const element = document.getElementById(id);
@@ -61,11 +62,20 @@ function Cell({ letter, status }: Guess) {
     };
   }, [id]);
 
+  useEffect(() => {
+    if (letter !== undefined && status !== undefined) {
+      setIsSubmitting(true);
+    }
+  }, [letter, status]);
+
   return (
     <motion.span
       id={id}
-      className={className}
-      animate={{ scale: isAnimating ? 1.2 : 1 }}
+      className={`${status ? `cell ${status}` : "cell"} ${isSubmitting ? "flip" : ""}`}
+      style={{ animationDelay: isSubmitting ? `${index * 0.25}s` : "0" }}
+      animate={{
+        scale: isAnimating ? 1.1 : 1,
+      }}
       transition={{
         type: "spring",
         duration: duration / 1000,

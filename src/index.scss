@@ -129,6 +129,10 @@ h1 {
   text-align: center;
   caret-color: transparent;
   text-transform: uppercase;
+
+  &.flip {
+    animation: flip 0.3s linear forwards;
+  }
 }
 
 /*
@@ -228,4 +232,13 @@ h1 {
 .keyboard .letter.misplaced {
   background: var(--color-warning);
   color: white;
+}
+
+@keyframes flip {
+  from {
+    transform: rotateX(0deg);
+  }
+  to {
+    transform: rotateX(180deg) scaleY(-1);
+  }
 }
