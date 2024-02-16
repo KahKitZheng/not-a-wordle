@@ -12,7 +12,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/play" element={<SingleplayerPage />} />
-        <Route path="/room/roomId" element={<MultiplayerPage />} />
+        <Route path="/room/:roomId" element={<MultiplayerPage />} />
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
