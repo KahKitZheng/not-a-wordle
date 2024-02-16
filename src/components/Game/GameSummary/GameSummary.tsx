@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom";
 import "./GameSummary.scss";
 
 type GameStatusProps = {
@@ -10,7 +11,7 @@ type GameStatusProps = {
 export default function GameSummary(props: GameStatusProps) {
   const { status, answer, handleClose, handleNextRound } = props;
 
-  return (
+  return createPortal(
     <>
       <div className="overlay-shade" />
       <div className="game-summary">
@@ -25,6 +26,7 @@ export default function GameSummary(props: GameStatusProps) {
           </button>
         </div>
       </div>
-    </>
+    </>,
+    document.body,
   );
 }
