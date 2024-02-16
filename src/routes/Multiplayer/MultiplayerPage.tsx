@@ -1,5 +1,5 @@
 import Layout from "../../components/Layout";
 
-export default function CreateRoomPage() {
+export default function MultiplayerPage() {
   return <Layout>Create a new room</Layout>;
 }
