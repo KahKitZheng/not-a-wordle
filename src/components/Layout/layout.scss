@@ -7,13 +7,14 @@
   color: var(--color-gray-300);
 
   .logo {
-    flex: 1;
     font-size: 2rem;
     font-weight: 600;
     text-decoration: none;
+    color: black;
+    width: fit-content;
 
     &:visited {
-      color: unset;
+      color: black;
     }
   }
 }

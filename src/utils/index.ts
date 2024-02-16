@@ -52,3 +52,7 @@ export function checkGuess(guess: string, answer: string) {
 
   return result;
 }
+
+export function randomId() {
+  return Math.random().toString(36).substring(2, 10);
+}

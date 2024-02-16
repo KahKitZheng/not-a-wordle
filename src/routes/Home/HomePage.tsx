@@ -1,10 +1,9 @@
-import { Link } from "react-router-dom";
 import Layout from "../../components/Layout";
+import { Link } from "react-router-dom";
+import { randomId } from "../../utils";
 import "./HomePage.scss";
 
 export default function HomePage() {
-  const randomId = () => Math.random().toString(36).substring(2, 10);
-
   return (
     <Layout>
       <div className="home__menu">

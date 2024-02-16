@@ -6,22 +6,25 @@ import {
   ROWS,
 } from "../../constants";
 import { checkGuess, getNewWord } from "../../utils";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { GameContext } from "../../contexts/GameContext";
 import GuessGrid from "./GuessGrid/GuessGrid";
 import GameKeyboard from "./GameKeyboard/GameKeyboard";
 import GameSummary from "./GameSummary/GameSummary";
 import "./Game.scss";
 
-export default function App() {
-  const [gameStatus, setGameStatus] = useState<GameStatus>(GAME_STATUS.RUNNING);
-  const [guesses, setGuesses] = useState<string[]>([]);
-  const [tentativeGuess, setTentativeGuess] = useState("");
-  const [answer, setAnswer] = useState(() => getNewWord(words));
-  const [cellIndex, setCellIndex] = useState(0);
+type GameProps = {
+  player: Player;
+};
 
-  useEffect(() => {
-    console.log("answer", answer);
-  }, [answer]);
+export default function Game(props: GameProps) {
+  const { userId, answer, setAnswer, gameStatus, setGameStatus } =
+    useContext(GameContext);
+  const { player } = props;
+
+  const [guesses, setGuesses] = useState<string[]>(props.player.guesses);
+  const [tentativeGuess, setTentativeGuess] = useState("");
+  const [cellIndex, setCellIndex] = useState(0);
 
   const validatedGuesses = guesses.map((guess) =>
     checkGuess(guess, answer),
@@ -43,7 +46,7 @@ export default function App() {
         ANIMATION_DURATION * COLUMNS,
       );
     }
-  }, [answer, guesses, tentativeGuess]);
+  }, [answer, guesses, setGameStatus, tentativeGuess]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -145,11 +148,13 @@ export default function App() {
     <>
       <form onSubmit={handleSubmit} className="game-form">
         <GuessGrid key={`grid-${answer}`} validatedGuesses={validatedGuesses} />
-        <GameKeyboard
-          key={`keyboard-${answer}`}
-          validatedGuesses={validatedGuesses}
-          handleKeyClick={handleOnClickKeyCap}
-        />
+        {player.id === userId ? (
+          <GameKeyboard
+            key={`keyboard-${answer}`}
+            validatedGuesses={validatedGuesses}
+            handleKeyClick={handleOnClickKeyCap}
+          />
+        ) : null}
       </form>
       {gameStatus === GAME_STATUS.WON || gameStatus === GAME_STATUS.LOST ? (
         <GameSummary

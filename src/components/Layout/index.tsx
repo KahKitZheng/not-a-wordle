@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import "./layout.scss";
+import { GameContextProvider } from "../../contexts/GameContext";
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -13,7 +14,9 @@ export default function Layout({ children }: LayoutProps) {
           Wordle clone
         </NavLink>
       </header>
-      <main className="game-wrapper">{children}</main>
+      <main className="game-wrapper">
+        <GameContextProvider>{children}</GameContextProvider>
+      </main>
     </>
   );
 }
