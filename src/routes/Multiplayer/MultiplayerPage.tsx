@@ -66,7 +66,7 @@ export default function MultiplayerPage() {
     [socket],
   );
 
-  const handleSubmitGuess = useCallback(
+  const submitMultiplayerGuess = useCallback(
     (guess: string) => {
       socket.send(
         JSON.stringify({
@@ -103,7 +103,7 @@ export default function MultiplayerPage() {
             <Game
               key={player.id}
               player={player}
-              handleSubmitGuess={handleSubmitGuess}
+              submitMultiplayerGuess={submitMultiplayerGuess}
             />
           ))}
 
@@ -133,7 +133,7 @@ export default function MultiplayerPage() {
             </div>
           ) : (
             <Game
-              handleSubmitGuess={handleSubmitGuess}
+              submitMultiplayerGuess={submitMultiplayerGuess}
               player={players?.find((player) => player.id === userId) as Player}
             />
           )}
@@ -145,7 +145,7 @@ export default function MultiplayerPage() {
                 <Game
                   key={player.id}
                   player={player}
-                  handleSubmitGuess={handleSubmitGuess}
+                  submitMultiplayerGuess={submitMultiplayerGuess}
                 />
               ))}
           </div>

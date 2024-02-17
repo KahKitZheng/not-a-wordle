@@ -15,7 +15,7 @@ import "./Game.scss";
 
 type GameProps = {
   player: Player;
-  handleSubmitGuess: (guesses: string) => void;
+  submitMultiplayerGuess?: (guesses: string) => void;
 };
 
 export default function Game(props: GameProps) {
@@ -35,7 +35,11 @@ export default function Game(props: GameProps) {
     const nextGuesses = [...guesses, tentativeGuess];
 
     setGuesses(nextGuesses);
-    props.handleSubmitGuess(tentativeGuess);
+
+    // Multiplayer only!!!
+    if (props.submitMultiplayerGuess) {
+      props.submitMultiplayerGuess(tentativeGuess);
+    }
 
     if (tentativeGuess.toUpperCase() === answer) {
       setTimeout(
