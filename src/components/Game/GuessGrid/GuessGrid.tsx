@@ -17,7 +17,6 @@ export default function GuessGrid(props: GuessGridProps) {
       {Array.from({ length: ROWS }).map((_, index) => (
         <Guess
           key={index}
-          rowIndex={index}
           value={validatedGuesses[index]}
           isCurrentPlayer={props.isCurrentPlayer}
         />
@@ -28,19 +27,17 @@ export default function GuessGrid(props: GuessGridProps) {
 
 type GuessProps = {
   value: Guess[];
-  rowIndex: number;
   isCurrentPlayer: boolean;
 };
 
 function Guess(props: GuessProps) {
-  const { value, rowIndex } = props;
+  const { value } = props;
 
   return (
     <p className="guess">
       {Array.from({ length: COLUMNS }).map((_, index) => (
         <Cell
           key={index}
-          rowIndex={rowIndex}
           columnIndex={index}
           letter={value ? value[index].letter : undefined}
           status={value ? value[index].status : undefined}
@@ -52,7 +49,6 @@ function Guess(props: GuessProps) {
 }
 
 type CellProps = Guess & {
-  rowIndex: number;
   columnIndex: number;
   isCurrentPlayer: boolean;
 };
@@ -67,6 +63,7 @@ function Cell(props: CellProps) {
   const id = useId();
   const cellRef = useRef<HTMLSpanElement>(null);
 
+  // Insert the letter inside the element
   useEffect(() => {
     const element = document.getElementById(id);
     const observer = new MutationObserver(function (mutations) {

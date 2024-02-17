@@ -7,7 +7,6 @@ export const parseActionMessage = (message: string) => {
 };
 
 export const createUpdateMessage = (players: Player[]) => {
-  console.log("createUpdateMessage", players);
   return JSON.stringify({
     type: "update",
     players,

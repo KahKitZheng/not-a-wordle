@@ -37,9 +37,6 @@ export default class Server implements Party.Server {
     // Rate limit incoming messages
     rateLimit(sender, 100, () => {
       const parsed = parseActionMessage(message);
-
-      console.log("parsed", parsed);
-
       this.updateAndBroadcastCount(parsed.action);
     });
   }
@@ -78,8 +75,6 @@ export default class Server implements Party.Server {
     this.room.broadcast(createUpdateMessage(this.players));
     // Store updated count
     this.room.storage.put("players", this.players);
-
-    console.log("players", this.players);
   }
 }
 
