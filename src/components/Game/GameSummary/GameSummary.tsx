@@ -1,4 +1,5 @@
 import { createPortal } from "react-dom";
+import { GAME_STATUS } from "../../../constants";
 import "./GameSummary.scss";
 
 type GameStatusProps = {
@@ -11,22 +12,24 @@ type GameStatusProps = {
 export default function GameSummary(props: GameStatusProps) {
   const { status, answer, handleClose, handleNextRound } = props;
 
-  return createPortal(
-    <>
-      <div className="overlay-shade" />
-      <div className="game-summary">
-        <p className="title">You {status}!</p>
-        <p className="description">The answer was {answer}</p>
-        <div className="button-group">
-          <button className="close-button" onClick={handleClose}>
-            Close
-          </button>
-          <button className="next-round-button" onClick={handleNextRound}>
-            Next round
-          </button>
-        </div>
-      </div>
-    </>,
-    document.body,
-  );
+  return status === GAME_STATUS.WON || status === GAME_STATUS.LOST
+    ? createPortal(
+        <>
+          <div className="overlay-shade" />
+          <div className="game-summary">
+            <p className="title">You {status}!</p>
+            <p className="description">The answer was {answer}</p>
+            <div className="button-group">
+              <button className="close-button" onClick={handleClose}>
+                Close
+              </button>
+              <button className="next-round-button" onClick={handleNextRound}>
+                Next round
+              </button>
+            </div>
+          </div>
+        </>,
+        document.body,
+      )
+    : null;
 }

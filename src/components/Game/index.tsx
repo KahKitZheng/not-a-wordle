@@ -156,14 +156,13 @@ export default function Game(props: GameProps) {
           />
         ) : null}
       </form>
-      {gameStatus === GAME_STATUS.WON || gameStatus === GAME_STATUS.LOST ? (
-        <GameSummary
-          status={gameStatus}
-          answer={answer}
-          handleClose={handleClose}
-          handleNextRound={handleNextRound}
-        />
-      ) : null}
+
+      <GameSummary
+        status={gameStatus}
+        answer={answer}
+        handleClose={handleClose}
+        handleNextRound={handleNextRound}
+      />
     </>
   );
 }
