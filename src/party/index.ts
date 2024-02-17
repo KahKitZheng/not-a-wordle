@@ -1,7 +1,8 @@
 import type * as Party from "partykit/server";
 import { createUpdateMessage, parseActionMessage } from "./types";
 import { rateLimit } from "./limiter";
-import { randomId } from "../utils";
+import { getNewWord, randomId } from "../utils";
+import { words } from "../constants/words";
 
 const json = (response: string) =>
   new Response(response, {
@@ -15,20 +16,22 @@ export default class Server implements Party.Server {
   constructor(readonly room: Party.Room) {}
 
   players: Player[] = [];
+  answer: string = "";
 
   async onStart() {
     // Load counter from storage on startup
     this.players = (await this.room.storage.get<Player[]>("players")) ?? [];
+    this.answer = (await this.room.storage.get<string>("answer")) ?? "";
   }
 
   async onRequest() {
     // For all HTTP request, respond with the current players
-    return json(createUpdateMessage(this.players));
+    return json(createUpdateMessage(this.answer, this.players));
   }
 
   onConnect(connection: Party.Connection) {
     // For all WebSocket connections, send the current players
-    connection.send(createUpdateMessage(this.players));
+    connection.send(createUpdateMessage(this.answer, this.players));
   }
 
   onMessage(message: string, sender: Party.Connection) {
@@ -54,6 +57,10 @@ export default class Server implements Party.Server {
         status: "running",
         guesses: [] as string[],
       });
+
+      if (this.players.length === 1) {
+        this.answer = getNewWord(words);
+      }
     }
 
     if (action.type === "leave") {
@@ -72,9 +79,11 @@ export default class Server implements Party.Server {
     }
 
     // Send updated count to all connected listeners
-    this.room.broadcast(createUpdateMessage(this.players));
+    this.room.broadcast(createUpdateMessage(this.answer, this.players));
+
     // Store updated count
     this.room.storage.put("players", this.players);
+    this.room.storage.put("answer", this.answer);
   }
 }
 

@@ -1,10 +1,10 @@
 import { useCallback, useContext, useEffect, useMemo } from "react";
 import { useBeforeUnload, useParams } from "react-router-dom";
 import { GO_AWAY_SENTINEL, SLOW_DOWN_SENTINEL } from "../../constants/partykit";
-import Game from "../../components/Game";
-import usePartySocket from "partysocket/react";
 import { GameContext } from "../../contexts/GameContext";
 import { randomId } from "../../utils";
+import Game from "../../components/Game";
+import usePartySocket from "partysocket/react";
 import "./Multiplayer.scss";
 
 // In case of custom setup, change this to your server's host
@@ -14,8 +14,15 @@ const host = import.meta.env.PROD
 
 export default function MultiplayerPage() {
   const { roomId } = useParams();
-  const { userId, setUserId, players, setPlayers, setGameMode } =
-    useContext(GameContext);
+  const {
+    userId,
+    setUserId,
+    players,
+    setPlayers,
+    setGameMode,
+    answer,
+    setAnswer,
+  } = useContext(GameContext);
 
   const id = useMemo(() => randomId(), []);
 
@@ -43,10 +50,13 @@ export default function MultiplayerPage() {
   const updateValues = useCallback(
     (event: WebSocketEventMap["message"]) => {
       const message = JSON.parse(event.data);
+
       console.log("message", message);
+
       setPlayers(message.players);
+      setAnswer(message.answer);
     },
-    [setPlayers],
+    [setPlayers, setAnswer],
   );
 
   const createActionMessage = (action: {

@@ -26,7 +26,7 @@ type GameContextProviderProps = {
 
 export const GameContextProvider = ({ children }: GameContextProviderProps) => {
   const [userId, setUserId] = useState<string>("");
-  const [answer, setAnswer] = useState(() => getNewWord(words));
+  const [answer, setAnswer] = useState("");
   const [gameStatus, setGameStatus] = useState<GameStatus>(GAME_STATUS.RUNNING);
   const [players, setPlayers] = useState<Player[]>([]);
   const [gameMode, setGameMode] = useState<GameMode>("single");
