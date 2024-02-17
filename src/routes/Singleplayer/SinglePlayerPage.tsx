@@ -1,8 +1,7 @@
 import { useContext, useEffect } from "react";
-import Game from "../../components/Game";
-import Layout from "../../components/Layout";
 import { randomId } from "../../utils";
 import { GameContext } from "../../contexts/GameContext";
+import Game from "../../components/Game";
 
 export default function SingleplayerPage() {
   const { setGameMode } = useContext(GameContext);
@@ -18,9 +17,5 @@ export default function SingleplayerPage() {
     setGameMode("single");
   }, []);
 
-  return (
-    <Layout>
-      <Game player={player} />
-    </Layout>
-  );
+  return <Game player={player} />;
 }

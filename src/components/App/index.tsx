@@ -12,7 +12,14 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/play" element={<SingleplayerPage />} />
+        <Route
+          path="/play"
+          element={
+            <Layout>
+              <SingleplayerPage />
+            </Layout>
+          }
+        />
         <Route
           path="/room/:roomId"
           element={
