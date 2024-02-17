@@ -92,7 +92,7 @@ function Cell(props: CellProps) {
         return;
       }
 
-      cellRef.current.className = `cell ${props.isCurrentPlayer ? `cell-${userId}` : ""} ${status ? status : ""} ${isSubmitting ? "flip" : ""}`;
+      cellRef.current.className = `cell ${props.isCurrentPlayer ? `cell-${userId}` : ""} ${status ? status : ""} ${isSubmitting && props.isCurrentPlayer ? "flip" : ""}`;
     }, ANIMATION_DURATION * columnIndex);
   }, [columnIndex, isSubmitting, props.isCurrentPlayer, status, userId]);
 

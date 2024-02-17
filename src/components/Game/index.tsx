@@ -73,7 +73,11 @@ export default function Game(props: GameProps) {
         }
       }
 
-      if (e.key === "Enter" && tentativeGuess.length === COLUMNS) {
+      if (
+        e.key === "Enter" &&
+        tentativeGuess.length === COLUMNS &&
+        player?.id === userId
+      ) {
         handleSubmit();
         setTentativeGuess("");
       }
@@ -93,6 +97,7 @@ export default function Game(props: GameProps) {
       gameStatus,
       guesses.length,
       handleSubmit,
+      player?.id,
       tentativeGuess,
       userId,
     ],
@@ -136,17 +141,17 @@ export default function Game(props: GameProps) {
     [cellIndex, gameStatus, guesses.length, handleSubmit, tentativeGuess],
   );
 
-  const handleClose = () => {
-    setGameStatus(GAME_STATUS.IDLE);
-  };
+  // const handleClose = () => {
+  //   setGameStatus(GAME_STATUS.IDLE);
+  // };
 
-  const handleNextRound = () => {
-    setAnswer(getNewWord(words));
-    setGuesses([]);
-    setTentativeGuess("");
-    setCellIndex(0);
-    setGameStatus(GAME_STATUS.RUNNING);
-  };
+  // const handleNextRound = () => {
+  //   setAnswer(getNewWord(words));
+  //   setGuesses([]);
+  //   setTentativeGuess("");
+  //   setCellIndex(0);
+  //   setGameStatus(GAME_STATUS.RUNNING);
+  // };
 
   useEffect(() => {
     setGuesses(player?.guesses ?? []);
@@ -176,12 +181,12 @@ export default function Game(props: GameProps) {
         ) : null}
       </form>
 
-      <GameSummary
+      {/* <GameSummary
         status={gameStatus}
         answer={answer}
         handleClose={handleClose}
         handleNextRound={handleNextRound}
-      />
+      /> */}
     </>
   );
 }
