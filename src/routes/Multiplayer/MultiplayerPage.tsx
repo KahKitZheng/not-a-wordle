@@ -43,6 +43,7 @@ export default function MultiplayerPage() {
   const updateValues = useCallback(
     (event: WebSocketEventMap["message"]) => {
       const message = JSON.parse(event.data);
+      console.log("message", message);
       setPlayers(message.players);
     },
     [setPlayers],
@@ -59,10 +60,26 @@ export default function MultiplayerPage() {
   };
 
   const handleJoin = useCallback(
-    (action: { type: "join" | "leave"; userId?: string }) => {
+    (action: { type: "join" | "leave"; userId: string }) => {
       socket.send(createActionMessage(action));
     },
     [socket],
+  );
+
+  const handleSubmitGuess = useCallback(
+    (guess: string) => {
+      socket.send(
+        JSON.stringify({
+          type: "action",
+          action: {
+            type: "guess",
+            userId: userId,
+            guess: guess,
+          },
+        }),
+      );
+    },
+    [socket, userId],
   );
 
   useEffect(() => {
@@ -83,7 +100,11 @@ export default function MultiplayerPage() {
       {players.length <= 4 ? (
         <div className="boards">
           {players.map((player) => (
-            <Game key={player.id} player={player} />
+            <Game
+              key={player.id}
+              player={player}
+              handleSubmitGuess={handleSubmitGuess}
+            />
           ))}
 
           {!players.find((player) => player.id === userId) ? (
@@ -112,6 +133,7 @@ export default function MultiplayerPage() {
             </div>
           ) : (
             <Game
+              handleSubmitGuess={handleSubmitGuess}
               player={players?.find((player) => player.id === userId) as Player}
             />
           )}
@@ -120,7 +142,11 @@ export default function MultiplayerPage() {
             {players
               .filter((player) => player.id !== userId)
               .map((player) => (
-                <Game key={player.id} player={player} />
+                <Game
+                  key={player.id}
+                  player={player}
+                  handleSubmitGuess={handleSubmitGuess}
+                />
               ))}
           </div>
         </div>

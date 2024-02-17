@@ -1,10 +1,12 @@
 import { motion } from "framer-motion";
-import { useEffect, useId, useRef, useState } from "react";
+import { useContext, useEffect, useId, useRef, useState } from "react";
 import { ANIMATION_DURATION, COLUMNS, ROWS } from "../../../constants";
 import "./GuessGrid.scss";
+import { GameContext } from "../../../contexts/GameContext";
 
 type GuessGridProps = {
   validatedGuesses: Guess[][];
+  isCurrentPlayer: boolean;
 };
 
 export default function GuessGrid(props: GuessGridProps) {
@@ -13,7 +15,12 @@ export default function GuessGrid(props: GuessGridProps) {
   return (
     <div className="guess-results">
       {Array.from({ length: ROWS }).map((_, index) => (
-        <Guess key={index} value={validatedGuesses[index]} />
+        <Guess
+          key={index}
+          rowIndex={index}
+          value={validatedGuesses[index]}
+          isCurrentPlayer={props.isCurrentPlayer}
+        />
       ))}
     </div>
   );
@@ -21,19 +28,23 @@ export default function GuessGrid(props: GuessGridProps) {
 
 type GuessProps = {
   value: Guess[];
+  rowIndex: number;
+  isCurrentPlayer: boolean;
 };
 
 function Guess(props: GuessProps) {
-  const { value } = props;
+  const { value, rowIndex } = props;
 
   return (
     <p className="guess">
       {Array.from({ length: COLUMNS }).map((_, index) => (
         <Cell
           key={index}
-          index={index}
+          rowIndex={rowIndex}
+          columnIndex={index}
           letter={value ? value[index].letter : undefined}
           status={value ? value[index].status : undefined}
+          isCurrentPlayer={props.isCurrentPlayer}
         />
       ))}
     </p>
@@ -41,11 +52,14 @@ function Guess(props: GuessProps) {
 }
 
 type CellProps = Guess & {
-  index: number;
+  rowIndex: number;
+  columnIndex: number;
+  isCurrentPlayer: boolean;
 };
 
 function Cell(props: CellProps) {
-  const { letter, status, index } = props;
+  const { letter, status, columnIndex } = props;
+  const { userId } = useContext(GameContext);
 
   const [isAnimating, setIsAnimating] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -81,15 +95,15 @@ function Cell(props: CellProps) {
         return;
       }
 
-      cellRef.current.className = `cell ${status ? status : ""} ${isSubmitting ? "flip" : ""}`;
-    }, ANIMATION_DURATION * index);
-  }, [index, isSubmitting, status]);
+      cellRef.current.className = `cell ${props.isCurrentPlayer ? `cell-${userId}` : ""} ${status ? status : ""} ${isSubmitting ? "flip" : ""}`;
+    }, ANIMATION_DURATION * columnIndex);
+  }, [columnIndex, isSubmitting, props.isCurrentPlayer, status, userId]);
 
   return (
     <motion.span
       id={id}
       ref={cellRef}
-      className="cell"
+      className={`cell ${props.isCurrentPlayer ? `cell-${userId}` : ""}`}
       animate={{ scale: isAnimating ? 1.1 : 1 }}
       transition={{
         type: "spring",

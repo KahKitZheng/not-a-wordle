@@ -15,6 +15,7 @@ import "./Game.scss";
 
 type GameProps = {
   player: Player;
+  handleSubmitGuess: (guesses: string) => void;
 };
 
 export default function Game(props: GameProps) {
@@ -22,7 +23,7 @@ export default function Game(props: GameProps) {
     useContext(GameContext);
   const { player } = props;
 
-  const [guesses, setGuesses] = useState<string[]>(props.player?.guesses ?? []);
+  const [guesses, setGuesses] = useState<string[]>(player?.guesses ?? []);
   const [tentativeGuess, setTentativeGuess] = useState("");
   const [cellIndex, setCellIndex] = useState(0);
 
@@ -34,6 +35,7 @@ export default function Game(props: GameProps) {
     const nextGuesses = [...guesses, tentativeGuess];
 
     setGuesses(nextGuesses);
+    props.handleSubmitGuess(tentativeGuess);
 
     if (tentativeGuess.toUpperCase() === answer) {
       setTimeout(
@@ -46,11 +48,11 @@ export default function Game(props: GameProps) {
         ANIMATION_DURATION * COLUMNS,
       );
     }
-  }, [answer, guesses, setGameStatus, tentativeGuess]);
+  }, [answer, guesses, props, setGameStatus, tentativeGuess]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      const cells = document.querySelectorAll(".cell");
+      const cells = document.querySelectorAll(`.cell-${userId}`);
 
       const keyPress = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
       const eventKey = e.key.toUpperCase();
@@ -86,7 +88,14 @@ export default function Game(props: GameProps) {
         setCellIndex((prev) => prev + 1);
       }
     },
-    [cellIndex, gameStatus, guesses.length, handleSubmit, tentativeGuess],
+    [
+      cellIndex,
+      gameStatus,
+      guesses.length,
+      handleSubmit,
+      tentativeGuess,
+      userId,
+    ],
   );
 
   const handleOnClickKeyCap = useCallback(
@@ -140,6 +149,10 @@ export default function Game(props: GameProps) {
   };
 
   useEffect(() => {
+    setGuesses(player?.guesses ?? []);
+  }, [player?.guesses]);
+
+  useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
@@ -148,7 +161,11 @@ export default function Game(props: GameProps) {
     <>
       <form onSubmit={handleSubmit} className="game-form">
         <p className="player-name">{player?.name}</p>
-        <GuessGrid key={`grid-${answer}`} validatedGuesses={validatedGuesses} />
+        <GuessGrid
+          key={`grid-${answer}`}
+          isCurrentPlayer={player?.id === userId}
+          validatedGuesses={validatedGuesses}
+        />
 
         {player?.id === userId || gameMode === "single" ? (
           <GameKeyboard

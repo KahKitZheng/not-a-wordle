@@ -44,7 +44,11 @@ export default class Server implements Party.Server {
     });
   }
 
-  updateAndBroadcastCount(action: { type: "join" | "leave"; userId?: string }) {
+  updateAndBroadcastCount(action: {
+    type: "join" | "leave" | "guess";
+    userId?: string;
+    guess?: string;
+  }) {
     // Update stored count
     if (action.type === "join") {
       this.players.push({
@@ -59,6 +63,15 @@ export default class Server implements Party.Server {
       this.players = this.players.filter(
         (player) => player.id !== action.userId,
       );
+    }
+
+    if (action.type === "guess") {
+      // add guess to player
+      const player = this.players.find((player) => player.id === action.userId);
+
+      if (player && action.guess) {
+        player.guesses.push(action.guess);
+      }
     }
 
     // Send updated count to all connected listeners
