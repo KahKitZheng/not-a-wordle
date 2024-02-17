@@ -147,7 +147,7 @@ export default function Game(props: GameProps) {
   return (
     <>
       <form onSubmit={handleSubmit} className="game-form">
-        <p className="player-name">{player?.id}</p>
+        <p className="player-name">{player?.name}</p>
         <GuessGrid key={`grid-${answer}`} validatedGuesses={validatedGuesses} />
 
         {player?.id === userId || gameMode === "single" ? (
