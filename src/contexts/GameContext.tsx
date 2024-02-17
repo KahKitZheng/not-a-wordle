@@ -12,6 +12,8 @@ type GameContextType = {
   setGameStatus: React.Dispatch<React.SetStateAction<GameStatus>>;
   players: Player[];
   setPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
+  gameMode: GameMode;
+  setGameMode: React.Dispatch<React.SetStateAction<GameMode>>;
 };
 
 export const GameContext = React.createContext<GameContextType>(
@@ -27,6 +29,7 @@ export const GameContextProvider = ({ children }: GameContextProviderProps) => {
   const [answer, setAnswer] = useState(() => getNewWord(words));
   const [gameStatus, setGameStatus] = useState<GameStatus>(GAME_STATUS.RUNNING);
   const [players, setPlayers] = useState<Player[]>([]);
+  const [gameMode, setGameMode] = useState<GameMode>("single");
 
   React.useEffect(() => console.log("answer", answer), [answer]);
 
@@ -41,6 +44,8 @@ export const GameContextProvider = ({ children }: GameContextProviderProps) => {
         setGameStatus,
         players,
         setPlayers,
+        gameMode,
+        setGameMode,
       }}
     >
       {children}

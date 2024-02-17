@@ -18,11 +18,11 @@ type GameProps = {
 };
 
 export default function Game(props: GameProps) {
-  const { userId, answer, setAnswer, gameStatus, setGameStatus } =
+  const { userId, answer, setAnswer, gameStatus, setGameStatus, gameMode } =
     useContext(GameContext);
   const { player } = props;
 
-  const [guesses, setGuesses] = useState<string[]>(props.player.guesses);
+  const [guesses, setGuesses] = useState<string[]>(props.player?.guesses ?? []);
   const [tentativeGuess, setTentativeGuess] = useState("");
   const [cellIndex, setCellIndex] = useState(0);
 
@@ -147,8 +147,10 @@ export default function Game(props: GameProps) {
   return (
     <>
       <form onSubmit={handleSubmit} className="game-form">
+        <p className="player-name">{player?.id}</p>
         <GuessGrid key={`grid-${answer}`} validatedGuesses={validatedGuesses} />
-        {player.id === userId ? (
+
+        {player?.id === userId || gameMode === "single" ? (
           <GameKeyboard
             key={`keyboard-${answer}`}
             validatedGuesses={validatedGuesses}

@@ -5,6 +5,7 @@ import Game from "../../components/Game";
 import usePartySocket from "partysocket/react";
 import { GameContext } from "../../contexts/GameContext";
 import { randomId } from "../../utils";
+import "./Multiplayer.scss";
 
 // In case of custom setup, change this to your server's host
 const host = import.meta.env.PROD
@@ -13,7 +14,8 @@ const host = import.meta.env.PROD
 
 export default function MultiplayerPage() {
   const { roomId } = useParams();
-  const { userId, setUserId, players, setPlayers } = useContext(GameContext);
+  const { userId, setUserId, players, setPlayers, setGameMode } =
+    useContext(GameContext);
 
   const id = useMemo(() => randomId(), []);
 
@@ -41,7 +43,6 @@ export default function MultiplayerPage() {
   const updateValues = useCallback(
     (event: WebSocketEventMap["message"]) => {
       const message = JSON.parse(event.data);
-      console.log("message", message);
       setPlayers(message.players);
     },
     [setPlayers],
@@ -66,59 +67,64 @@ export default function MultiplayerPage() {
 
   useEffect(() => {
     setUserId(id);
+    setGameMode("multi");
   }, []);
 
   // Disconnects the user when they leave the page!!!
   useBeforeUnload(
     useCallback(() => {
       socket.send(createActionMessage({ type: "leave", userId: id }));
+      socket.close();
     }, [id, socket]),
   );
 
   return (
     <>
-      <div>
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          <p style={{ margin: 0 }}>number of players: {players?.length}</p>
-          <p style={{ margin: 0 }}>room id: {roomId}</p>
-        </div>
-      </div>
+      {players.length <= 4 ? (
+        <div className="boards">
+          {players.map((player) => (
+            <Game key={player.id} player={player} />
+          ))}
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(0, 1fr))",
-          gridAutoFlow: "row",
-          gap: "1rem",
-          width: "100%",
-          marginTop: "2rem",
-          padding: "0 4rem",
-        }}
-      >
-        {players.map((player) => (
-          <Game key={player.id} player={player} />
-        ))}
-        {!players.find((player) => player.id === userId) ? (
-          <button
-            style={{
-              display: "grid",
-              placeContent: "center",
-              height: "10rem",
-              width: "10rem",
-              border: "1px solid black",
-              borderRadius: "6px",
-              backgroundColor: "transparent",
-              cursor: "pointer",
-              fontSize: "1rem",
-              fontWeight: "600",
-              padding: "1rem",
-            }}
-            onClick={() => handleJoin({ type: "join", userId: userId })}
-          >
-            Join the game!
-          </button>
-        ) : null}
-      </div>
+          {!players.find((player) => player.id === userId) ? (
+            <div className="join-wrapper">
+              <button
+                className="join-button"
+                onClick={() => handleJoin({ type: "join", userId: userId })}
+              >
+                Join the game!
+              </button>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
+      {players.length >= 5 ? (
+        <div className="big-layout">
+          {!players.find((player) => player.id === userId) ? (
+            <div className="join-wrapper">
+              <button
+                className="join-button"
+                onClick={() => handleJoin({ type: "join", userId: userId })}
+              >
+                Join the game!
+              </button>
+            </div>
+          ) : (
+            <Game
+              player={players?.find((player) => player.id === userId) as Player}
+            />
+          )}
+
+          <div className="boards">
+            {players
+              .filter((player) => player.id !== userId)
+              .map((player) => (
+                <Game key={player.id} player={player} />
+              ))}
+          </div>
+        </div>
+      ) : null}
     </>
   );
 }

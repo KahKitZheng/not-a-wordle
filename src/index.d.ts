@@ -11,3 +11,5 @@ type Player = {
   status: GameStatus;
   guesses: string[];
 };
+
+type GameMode = "single" | "multi";
