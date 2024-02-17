@@ -113,7 +113,7 @@ function Cell(props: CellProps) {
         bounce: 0.5,
       }}
     >
-      {letter}
+      {props.isCurrentPlayer ? letter : ""}
     </motion.span>
   );
 }
