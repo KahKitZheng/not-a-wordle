@@ -158,8 +158,12 @@ export default function Game(props: GameProps) {
   // };
 
   useEffect(() => {
+    if (gameMode === "single") {
+      return;
+    }
+
     setGuesses(player?.guesses ?? []);
-  }, [player?.guesses]);
+  }, [gameMode, player?.guesses]);
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
