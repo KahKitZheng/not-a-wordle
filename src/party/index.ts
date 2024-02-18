@@ -62,7 +62,7 @@ export default class Server implements Party.Server {
       | "confirm-ready";
     userId?: string;
     guess?: string;
-    isReady?: boolean;
+    isReady?: "ready" | "not-ready";
   }) {
     // Update stored count
     if (action.type === "join") {
@@ -71,7 +71,7 @@ export default class Server implements Party.Server {
         name: "Player " + (this.players.length + 1),
         status: "running",
         guesses: [] as string[],
-        isReady: false,
+        isReady: undefined,
         isAdmin: this.players.length === 0 ? true : false,
         isWinner: false,
       });
@@ -110,7 +110,7 @@ export default class Server implements Party.Server {
 
     if (action.type === "collect-ready-check") {
       const isEveryoneReady = this.players.every((player) => {
-        return player.isReady === true;
+        return player.isReady === "ready";
       });
 
       if (isEveryoneReady) {
@@ -124,7 +124,7 @@ export default class Server implements Party.Server {
       const player = this.players.find((player) => player.id === action.userId);
 
       if (player) {
-        player.isReady = action.isReady ?? false;
+        player.isReady = action.isReady;
       }
     }
 

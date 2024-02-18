@@ -12,7 +12,7 @@ type Player = {
   name: string;
   status: GameStatus; // might not be needed
   guesses: string[];
-  isReady: boolean;
+  isReady: "ready" | "not-ready" | undefined;
   isAdmin: boolean;
   isWinner: boolean;
 };

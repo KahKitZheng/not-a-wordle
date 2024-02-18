@@ -15,6 +15,13 @@ export default function GameReadyCheck(props: GameReadyCheckProps) {
 
   const currentPlayer = players.find((player) => player.id === userId);
 
+  function getReadyState(player: Player) {
+    if (player.isReady === undefined) {
+      return "";
+    }
+    return player.isReady ? "ready" : "not-ready";
+  }
+
   return open ? (
     <>
       <div className="overlay-shade" />
@@ -22,10 +29,10 @@ export default function GameReadyCheck(props: GameReadyCheckProps) {
         <h1 className="ready-check-title">Ready check!</h1>
         <ul className="button-users">
           {players.map((player) => (
-            <li className={`user ${player.isReady ? "ready" : "not-ready"}`}>
+            <li className={`user ${getReadyState(player)}`}>
               <UserIcon
                 key={player.id}
-                isReady={player.isReady}
+                isReady={player.isReady === "ready"}
                 isCurrentUser={player.id === currentPlayer?.id}
               />
             </li>
