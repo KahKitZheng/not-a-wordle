@@ -22,7 +22,7 @@ export default function GameReadyCheck(props: GameReadyCheckProps) {
         <h1 className="ready-check-title">Ready check!</h1>
         <ul className="button-users">
           {players.map((player) => (
-            <li className={`user ${player.isReady ? "ready" : ""}`}>
+            <li className={`user ${player.isReady ? "ready" : "not-ready"}`}>
               <UserIcon
                 key={player.id}
                 isReady={player.isReady}
