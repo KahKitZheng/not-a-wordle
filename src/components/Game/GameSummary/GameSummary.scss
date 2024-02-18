@@ -36,25 +36,31 @@
   }
 
   .button-group {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     margin-top: 1rem;
 
-    .close-button,
-    .next-round-button {
+    .button {
       border: 2px solid black;
       padding: 8px 16px;
       box-shadow: 2px 2px 0 black;
       border-radius: 4px;
       font-weight: 600;
-    }
+      text-align: center;
+      transition: scale 0.2s ease-in-out;
 
-    .quit-button {
-      border-color: black;
-    }
+      &:hover {
+        scale: 1.1;
+      }
 
-    .next-round-button {
-      background-color: mediumaquamarine;
+      &.cancel {
+        border-color: black;
+      }
+
+      &.next-round {
+        background-color: mediumaquamarine;
+      }
     }
   }
 }

@@ -29,10 +29,10 @@ function SinglePlayerSummary() {
             <p className="title">You {gameStatus}!</p>
             <p className="description">The answer was {answer}</p>
             <div className="button-group">
-              <button className="close-button" onClick={closeSummary}>
+              <button className="button cancel" onClick={closeSummary}>
                 Close
               </button>
-              <button className="next-round-button" onClick={prepNextRound}>
+              <button className="button next-round" onClick={prepNextRound}>
                 Next round
               </button>
             </div>
