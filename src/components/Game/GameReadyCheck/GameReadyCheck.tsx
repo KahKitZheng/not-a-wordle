@@ -1,7 +1,9 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { GameContext } from "../../../contexts/GameContext";
 import UserIcon from "../../../icons/UserIcon";
 import "./GameReadyCheck.scss";
+import { READY_CHECK_DURATION } from "../../../constants";
+import { motion } from "framer-motion";
 
 type GameReadyCheckProps = {
   open: boolean;
@@ -38,6 +40,20 @@ export default function GameReadyCheck(props: GameReadyCheckProps) {
             </li>
           ))}
         </ul>
+
+        <div className="loading-wrapper">
+          <motion.div
+            className="progress-bar"
+            animate={{
+              width: ["0%", "100%"],
+              backgroundColor: ["#f00", "mediumaquamarine"],
+            }}
+            transition={{
+              duration: READY_CHECK_DURATION / 1000,
+              ease: "linear",
+            }}
+          />
+        </div>
 
         <div className="button-group">
           <button

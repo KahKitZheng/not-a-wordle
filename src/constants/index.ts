@@ -16,3 +16,5 @@ export const GAME_STATUS = {
   IDLE: "idle",
   PREP: "prep",
 } as const;
+
+export const READY_CHECK_DURATION = 10000; // ms

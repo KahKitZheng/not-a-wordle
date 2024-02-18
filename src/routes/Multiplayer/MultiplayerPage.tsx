@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useBeforeUnload, useParams } from "react-router-dom";
 import { GO_AWAY_SENTINEL, SLOW_DOWN_SENTINEL } from "../../constants/partykit";
 import { GameContext } from "../../contexts/GameContext";
-import { GAME_STATUS } from "../../constants";
+import { GAME_STATUS, READY_CHECK_DURATION } from "../../constants";
 import { randomId } from "../../utils";
 import Game from "../../components/Game";
 import GameSummary from "../../components/Game/GameSummary/GameSummary";
@@ -134,7 +134,7 @@ export default function MultiplayerPage() {
           action: { type: "collect-ready-check" },
         }),
       );
-    }, 10000);
+    }, READY_CHECK_DURATION);
   }, [socket, userId]);
 
   const selectReadyState = useCallback(
@@ -201,6 +201,36 @@ export default function MultiplayerPage() {
     }, [disconnect, socket]),
   );
 
+  function getLayouts(players: Player[]) {
+    const playerBoards = players?.length - 1;
+    const isPlayerInGame = players?.find((player) => player.id === userId);
+
+    console.log(players, userId);
+    console.log(playerBoards, isPlayerInGame);
+
+    if (playerBoards <= 3) {
+      return "three-columns";
+    }
+    if (playerBoards === 4 && !isPlayerInGame) {
+      return "four-columns";
+    }
+    if (playerBoards === 4) {
+      return "two-by-two-columns";
+    }
+    if (playerBoards > 4 && playerBoards <= 8) {
+      return "four-columns";
+    }
+    if (playerBoards === 8 && !isPlayerInGame) {
+      return "five-columns";
+    }
+    if (playerBoards > 8 && playerBoards <= 12) {
+      return "five-columns";
+    }
+    if (playerBoards > 12) {
+      return "six-columns";
+    }
+  }
+
   return (
     <>
       <div className="multiplayer-page-wrapper">
@@ -245,6 +275,9 @@ export default function MultiplayerPage() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
+                    position: "sticky",
+                    top: "0",
+                    left: "0",
                   }}
                 >
                   {renderGame(
@@ -252,7 +285,7 @@ export default function MultiplayerPage() {
                   )}
                 </div>
               )}
-              <div className="boards">
+              <div className={`boards ${getLayouts(players)}`}>
                 {players
                   .filter((player) => player.id !== userId)
                   .map((player) => renderGame(player))}
