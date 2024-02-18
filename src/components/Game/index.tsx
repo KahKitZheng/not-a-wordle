@@ -110,7 +110,7 @@ export default function Game(props: GameProps) {
 
   const handleOnClickKeyCap = useCallback(
     (letter: string) => {
-      const cells = document.querySelectorAll(".cell");
+      const cells = document.querySelectorAll(`.cell-${userId}`);
 
       if (gameStatus !== GAME_STATUS.RUNNING) {
         return;
