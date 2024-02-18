@@ -1,11 +1,4 @@
-type UserIconProps = {
-  isReady: boolean;
-  isCurrentUser: boolean;
-};
-
-export default function UserIcon(props: UserIconProps) {
-  const { isReady, isCurrentUser } = props;
-
+export default function UserIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
