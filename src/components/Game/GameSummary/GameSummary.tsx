@@ -44,16 +44,24 @@ function SinglePlayerSummary() {
 }
 
 function MultiPlayerSummary() {
-  const { gameStatus, answer, closeSummary, players } = useContext(GameContext);
+  const { userId, gameStatus, answer, closeSummary, players } =
+    useContext(GameContext);
 
   const winner = players.find((player) => player.isWinner);
+  const currentPlayer = players.find((player) => player.id === userId);
 
   return gameStatus === GAME_STATUS.WON || gameStatus === GAME_STATUS.LOST
     ? createPortal(
         <>
           <div className="overlay-shade" />
           <div className="game-summary">
-            <p className="title">You {gameStatus}!</p>
+            <p className="title">
+              {winner
+                ? winner?.id === currentPlayer?.id
+                  ? `You ${gameStatus}!`
+                  : `Winner is ${winner.name}`
+                : "You lost!"}
+            </p>
             {winner ? (
               <p className="description">The answer was {answer}</p>
             ) : null}
