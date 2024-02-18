@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useState } from "react";
 import { GAME_STATUS } from "../constants";
-import { getNewWord, randomId } from "../utils";
+import { getNewWord } from "../utils";
 import { words } from "../constants/words";
 
 type GameContextType = {
@@ -14,6 +14,8 @@ type GameContextType = {
   setPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
   gameMode: GameMode;
   setGameMode: React.Dispatch<React.SetStateAction<GameMode>>;
+  closeSummary: () => void;
+  prepNextRound: () => void;
 };
 
 export const GameContext = React.createContext<GameContextType>(
@@ -31,7 +33,19 @@ export const GameContextProvider = ({ children }: GameContextProviderProps) => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [gameMode, setGameMode] = useState<GameMode>("single");
 
-  React.useEffect(() => console.log("answer", answer), [answer]);
+  // Quick access for debugging or to cheat :P
+  React.useEffect(() => {
+    return console.log("answer", answer);
+  }, [answer]);
+
+  function closeSummary() {
+    setGameStatus(GAME_STATUS.IDLE);
+  }
+
+  function prepNextRound() {
+    setAnswer(getNewWord(words));
+    setGameStatus(GAME_STATUS.RUNNING);
+  }
 
   return (
     <GameContext.Provider
@@ -46,6 +60,8 @@ export const GameContextProvider = ({ children }: GameContextProviderProps) => {
         setPlayers,
         gameMode,
         setGameMode,
+        closeSummary,
+        prepNextRound,
       }}
     >
       {children}

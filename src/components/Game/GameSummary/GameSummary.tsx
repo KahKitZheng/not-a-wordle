@@ -1,29 +1,25 @@
 import { createPortal } from "react-dom";
 import { GAME_STATUS } from "../../../constants";
+import { useContext } from "react";
+import { GameContext } from "../../../contexts/GameContext";
 import "./GameSummary.scss";
 
-type GameStatusProps = {
-  status: GameStatus;
-  answer: string;
-  handleClose: () => void;
-  handleNextRound: () => void;
-};
+export default function GameSummary() {
+  const { gameStatus, answer, closeSummary, prepNextRound } =
+    useContext(GameContext);
 
-export default function GameSummary(props: GameStatusProps) {
-  const { status, answer, handleClose, handleNextRound } = props;
-
-  return status === GAME_STATUS.WON || status === GAME_STATUS.LOST
+  return gameStatus === GAME_STATUS.WON || gameStatus === GAME_STATUS.LOST
     ? createPortal(
         <>
           <div className="overlay-shade" />
           <div className="game-summary">
-            <p className="title">You {status}!</p>
+            <p className="title">You {gameStatus}!</p>
             <p className="description">The answer was {answer}</p>
             <div className="button-group">
-              <button className="close-button" onClick={handleClose}>
+              <button className="close-button" onClick={closeSummary}>
                 Close
               </button>
-              <button className="next-round-button" onClick={handleNextRound}>
+              <button className="next-round-button" onClick={prepNextRound}>
                 Next round
               </button>
             </div>

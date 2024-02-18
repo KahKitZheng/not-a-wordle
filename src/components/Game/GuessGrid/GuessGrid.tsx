@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import { useContext, useEffect, useId, useRef, useState } from "react";
+import { GameContext } from "../../../contexts/GameContext";
 import { ANIMATION_DURATION, COLUMNS, ROWS } from "../../../constants";
 import "./GuessGrid.scss";
-import { GameContext } from "../../../contexts/GameContext";
 
 type GuessGridProps = {
   validatedGuesses: Guess[][];
