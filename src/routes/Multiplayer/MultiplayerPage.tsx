@@ -13,7 +13,7 @@ import GameReadyCheck from "../../components/Game/GameReadyCheck/GameReadyCheck"
 
 // In case of custom setup, change this to your server's host
 const host = import.meta.env.PROD
-  ? window.location.origin
+  ? "https://not-a-wordle.kahkitzheng.partykit.dev/"
   : "http://localhost:1999";
 
 export default function MultiplayerPage() {
