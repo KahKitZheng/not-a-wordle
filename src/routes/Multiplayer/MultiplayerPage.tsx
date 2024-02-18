@@ -138,7 +138,7 @@ export default function MultiplayerPage() {
   }, [socket, userId]);
 
   const selectReadyState = useCallback(
-    (isReady: boolean) => {
+    (isReady: "ready" | "not-ready" | undefined) => {
       socket.send(
         JSON.stringify({
           type: "action",

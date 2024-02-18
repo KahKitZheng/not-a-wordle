@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { GameContext } from "../../../contexts/GameContext";
 import UserIcon from "../../../icons/UserIcon";
 import "./GameReadyCheck.scss";
@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 type GameReadyCheckProps = {
   open: boolean;
   onClose: () => void;
-  handleReadyCheck: (isReady: boolean) => void;
+  handleReadyCheck: (isReady: "ready" | "not-ready" | undefined) => void;
 };
 
 export default function GameReadyCheck(props: GameReadyCheckProps) {
@@ -58,13 +58,13 @@ export default function GameReadyCheck(props: GameReadyCheckProps) {
         <div className="button-group">
           <button
             className="button decline"
-            onClick={() => handleReadyCheck(false)}
+            onClick={() => handleReadyCheck("not-ready")}
           >
             not ready
           </button>
           <button
             className="button accept"
-            onClick={() => handleReadyCheck(true)}
+            onClick={() => handleReadyCheck("ready")}
           >
             ready
           </button>

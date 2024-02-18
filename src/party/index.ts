@@ -116,6 +116,9 @@ export default class Server implements Party.Server {
       if (isEveryoneReady) {
         this.matchStatus = "running";
       } else {
+        this.players.forEach((player) => {
+          player.isReady = undefined;
+        });
         this.matchStatus = "idle";
       }
     }
