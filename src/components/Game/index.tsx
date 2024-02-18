@@ -10,11 +10,13 @@ import { GameContext } from "../../contexts/GameContext";
 import GuessGrid from "./GuessGrid/GuessGrid";
 import GameKeyboard from "./GameKeyboard/GameKeyboard";
 import "./Game.scss";
+import RemoveIcon from "../../icons/RemoveIcon";
 
 type GameProps = {
   player: Player;
   submitMultiplayerGuess?: (guesses: string) => void;
   submitWinner?: () => void;
+  leaveRoom?: () => void;
 };
 
 export default function Game(props: GameProps) {
@@ -29,6 +31,16 @@ export default function Game(props: GameProps) {
   const validatedGuesses = guesses.map((guess) =>
     checkGuess(guess, answer),
   ) as Guess[][];
+
+  const handleLeaveRoom = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    e.preventDefault();
+
+    if (props.leaveRoom) {
+      props.leaveRoom();
+    }
+  };
 
   const handleSubmit = useCallback(() => {
     const nextGuesses = [...guesses, tentativeGuess];
@@ -173,7 +185,26 @@ export default function Game(props: GameProps) {
   return (
     <>
       <form onSubmit={handleSubmit} className="game-form">
-        <p className="player-name">{player?.name}</p>
+        {gameMode === "multi" ? (
+          <p className="player-name">
+            {player?.name}
+            {player.id === userId ? (
+              <button
+                style={{
+                  height: "1.25rem",
+                  width: "1.25rem",
+                  marginLeft: ".5rem",
+                  backgroundColor: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+                onClick={handleLeaveRoom}
+              >
+                <RemoveIcon />
+              </button>
+            ) : null}
+          </p>
+        ) : null}
         <GuessGrid
           key={`grid-${answer}`}
           isCurrentPlayer={player?.id === userId}

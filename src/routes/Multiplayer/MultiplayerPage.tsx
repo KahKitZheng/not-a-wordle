@@ -2,12 +2,12 @@ import { useCallback, useContext, useEffect, useMemo } from "react";
 import { useBeforeUnload, useParams } from "react-router-dom";
 import { GO_AWAY_SENTINEL, SLOW_DOWN_SENTINEL } from "../../constants/partykit";
 import { GameContext } from "../../contexts/GameContext";
+import { GAME_STATUS } from "../../constants";
 import { randomId } from "../../utils";
 import Game from "../../components/Game";
 import GameSummary from "../../components/Game/GameSummary/GameSummary";
 import usePartySocket from "partysocket/react";
 import "./Multiplayer.scss";
-import { GAME_STATUS } from "../../constants";
 
 // In case of custom setup, change this to your server's host
 const host = import.meta.env.PROD
@@ -106,6 +106,25 @@ export default function MultiplayerPage() {
     );
   }, [socket, userId]);
 
+  function renderGame(player: Player) {
+    return (
+      <Game
+        key={player.id}
+        player={player}
+        submitMultiplayerGuess={submitMultiplayerGuess}
+        submitWinner={submitWinner}
+        leaveRoom={() => {
+          socket.send(
+            createActionMessage({
+              type: "leave",
+              userId: id,
+            }),
+          );
+        }}
+      />
+    );
+  }
+
   useEffect(() => {
     setUserId(id);
     setGameMode("multi");
@@ -136,64 +155,64 @@ export default function MultiplayerPage() {
 
   return (
     <>
-      {players.length <= 4 ? (
-        <div className="boards">
-          {players.map((player) => (
-            <Game
-              key={player.id}
-              player={player}
-              submitMultiplayerGuess={submitMultiplayerGuess}
-              submitWinner={submitWinner}
-            />
-          ))}
-
-          {!players.find((player) => player.id === userId) ? (
-            <div className="join-wrapper">
-              <button
-                className="join-button"
-                onClick={() => handleJoin({ type: "join", userId: userId })}
-              >
-                Join the game!
-              </button>
+      <div className="multiplayer-page-wrapper">
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
+          }}
+        >
+          {players.length <= 4 ? (
+            <div className="boards">
+              {players.map((player) => renderGame(player))}
+              {!players.find((player) => player.id === userId) ? (
+                <div className="join-wrapper">
+                  <button
+                    className="join-button"
+                    onClick={() => handleJoin({ type: "join", userId: userId })}
+                  >
+                    Join the game!
+                  </button>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+          {players.length >= 5 ? (
+            <div className="big-layout">
+              {!players.find((player) => player.id === userId) ? (
+                <div className="join-wrapper">
+                  <button
+                    className="join-button"
+                    onClick={() => handleJoin({ type: "join", userId: userId })}
+                  >
+                    Join the game!
+                  </button>
+                </div>
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {renderGame(
+                    players?.find((player) => player.id === userId) as Player,
+                  )}
+                </div>
+              )}
+              <div className="boards">
+                {players
+                  .filter((player) => player.id !== userId)
+                  .map((player) => renderGame(player))}
+              </div>
             </div>
           ) : null}
         </div>
-      ) : null}
-
-      {players.length >= 5 ? (
-        <div className="big-layout">
-          {!players.find((player) => player.id === userId) ? (
-            <div className="join-wrapper">
-              <button
-                className="join-button"
-                onClick={() => handleJoin({ type: "join", userId: userId })}
-              >
-                Join the game!
-              </button>
-            </div>
-          ) : (
-            <Game
-              player={players?.find((player) => player.id === userId) as Player}
-              submitMultiplayerGuess={submitMultiplayerGuess}
-              submitWinner={submitWinner}
-            />
-          )}
-
-          <div className="boards">
-            {players
-              .filter((player) => player.id !== userId)
-              .map((player) => (
-                <Game
-                  key={player.id}
-                  player={player}
-                  submitMultiplayerGuess={submitMultiplayerGuess}
-                  submitWinner={submitWinner}
-                />
-              ))}
-          </div>
-        </div>
-      ) : null}
-
+      </div>
       <GameSummary />
     </>
   );
