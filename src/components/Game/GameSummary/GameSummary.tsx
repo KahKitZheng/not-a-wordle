@@ -65,11 +65,9 @@ function MultiPlayerSummary() {
             {winner ? (
               <p className="description">The answer was {answer}</p>
             ) : null}
-            <div className="button-group">
-              <button className="close-button" onClick={closeSummary}>
-                {winner ? "Close" : "Keep spectating!"}
-              </button>
-            </div>
+            <button className="button cancel" onClick={closeSummary}>
+              {winner ? "Close" : "Keep spectating!"}
+            </button>
           </div>
         </>,
         document.body,
