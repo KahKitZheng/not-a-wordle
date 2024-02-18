@@ -11,7 +11,7 @@ export default function Layout({ children }: LayoutProps) {
     <>
       <header className="logo-wrapper">
         <NavLink className="logo" to="/">
-          Wordle clone
+          Not a wordle clone
         </NavLink>
       </header>
       <main className="game-wrapper">
