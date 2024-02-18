@@ -2,5 +2,9 @@
   "$schema": "https://www.partykit.io/schema.json",
   "name": "not-a-wordle",
   "main": "src/party/index.ts",
-  "compatibilityDate": "2024-02-16"
+  "compatibilityDate": "2024-02-16",
+  "serve": {
+    "path": "dist",
+    "singlePageApp": true
+  }
 }
