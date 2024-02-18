@@ -45,7 +45,7 @@ export default class Server implements Party.Server {
   }
 
   updateAndBroadcastCount(action: {
-    type: "join" | "leave" | "guess";
+    type: "join" | "leave" | "guess" | "winner";
     userId?: string;
     guess?: string;
   }) {
@@ -56,6 +56,7 @@ export default class Server implements Party.Server {
         name: "Player " + (this.players.length + 1),
         status: "running",
         guesses: [] as string[],
+        isWinner: false,
       });
 
       if (this.players.length === 1) {
@@ -75,6 +76,14 @@ export default class Server implements Party.Server {
 
       if (player && action.guess) {
         player.guesses.push(action.guess);
+      }
+    }
+
+    if (action.type === "winner") {
+      const player = this.players.find((player) => player.id === action.userId);
+
+      if (player) {
+        player.isWinner = true;
       }
     }
 

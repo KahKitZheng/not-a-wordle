@@ -8,8 +8,9 @@ type Guess = {
 type Player = {
   id: string;
   name: string;
-  status: GameStatus;
+  status: GameStatus; // might not be needed
   guesses: string[];
+  isWinner: boolean;
 };
 
 type GameMode = "single" | "multi";

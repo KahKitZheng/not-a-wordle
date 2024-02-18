@@ -4,8 +4,10 @@ import { GO_AWAY_SENTINEL, SLOW_DOWN_SENTINEL } from "../../constants/partykit";
 import { GameContext } from "../../contexts/GameContext";
 import { randomId } from "../../utils";
 import Game from "../../components/Game";
+import GameSummary from "../../components/Game/GameSummary/GameSummary";
 import usePartySocket from "partysocket/react";
 import "./Multiplayer.scss";
+import { GAME_STATUS } from "../../constants";
 
 // In case of custom setup, change this to your server's host
 const host = import.meta.env.PROD
@@ -20,8 +22,8 @@ export default function MultiplayerPage() {
     players,
     setPlayers,
     setGameMode,
-    answer,
     setAnswer,
+    setGameStatus,
   } = useContext(GameContext);
 
   const id = useMemo(() => randomId(), []);
@@ -92,10 +94,37 @@ export default function MultiplayerPage() {
     [socket, userId],
   );
 
+  const submitWinner = useCallback(() => {
+    socket.send(
+      JSON.stringify({
+        type: "action",
+        action: {
+          type: "winner",
+          userId: userId,
+        },
+      }),
+    );
+  }, [socket, userId]);
+
   useEffect(() => {
     setUserId(id);
     setGameMode("multi");
   }, []);
+
+  // Keep checking for a winner and update the game status
+  useEffect(() => {
+    const winner = players.find((player) => player.isWinner);
+
+    if (!winner) {
+      return;
+    }
+
+    if (winner.id === userId) {
+      setGameStatus(GAME_STATUS.WON);
+    } else {
+      setGameStatus(GAME_STATUS.LOST);
+    }
+  }, [players, setGameStatus, userId]);
 
   // Disconnects the user when they leave the page!!!
   useBeforeUnload(
@@ -114,6 +143,7 @@ export default function MultiplayerPage() {
               key={player.id}
               player={player}
               submitMultiplayerGuess={submitMultiplayerGuess}
+              submitWinner={submitWinner}
             />
           ))}
 
@@ -143,8 +173,9 @@ export default function MultiplayerPage() {
             </div>
           ) : (
             <Game
-              submitMultiplayerGuess={submitMultiplayerGuess}
               player={players?.find((player) => player.id === userId) as Player}
+              submitMultiplayerGuess={submitMultiplayerGuess}
+              submitWinner={submitWinner}
             />
           )}
 
@@ -156,11 +187,14 @@ export default function MultiplayerPage() {
                   key={player.id}
                   player={player}
                   submitMultiplayerGuess={submitMultiplayerGuess}
+                  submitWinner={submitWinner}
                 />
               ))}
           </div>
         </div>
       ) : null}
+
+      <GameSummary />
     </>
   );
 }

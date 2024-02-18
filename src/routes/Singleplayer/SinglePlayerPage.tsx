@@ -10,12 +10,13 @@ export default function SingleplayerPage() {
 
   const id = useMemo(() => randomId(), []);
 
-  const player = {
+  const player: Player = {
     id: id,
     name: "Player 1",
     status: "running",
     guesses: [] as string[],
-  } as Player;
+    isWinner: false,
+  };
 
   useEffect(() => {
     setUserId(id);

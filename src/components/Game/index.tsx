@@ -14,10 +14,11 @@ import "./Game.scss";
 type GameProps = {
   player: Player;
   submitMultiplayerGuess?: (guesses: string) => void;
+  submitWinner?: () => void;
 };
 
 export default function Game(props: GameProps) {
-  const { userId, answer, setAnswer, gameStatus, setGameStatus, gameMode } =
+  const { userId, answer, gameStatus, setGameStatus, gameMode } =
     useContext(GameContext);
   const { player } = props;
 
@@ -40,15 +41,17 @@ export default function Game(props: GameProps) {
     }
 
     if (tentativeGuess.toUpperCase() === answer) {
-      setTimeout(
-        () => setGameStatus(GAME_STATUS.WON),
-        ANIMATION_DURATION * COLUMNS,
-      );
+      setTimeout(() => {
+        setGameStatus(GAME_STATUS.WON);
+
+        if (props.submitWinner) {
+          props.submitWinner();
+        }
+      }, ANIMATION_DURATION * COLUMNS);
     } else if (nextGuesses.length >= ROWS) {
-      setTimeout(
-        () => setGameStatus(GAME_STATUS.LOST),
-        ANIMATION_DURATION * COLUMNS,
-      );
+      setTimeout(() => {
+        setGameStatus(GAME_STATUS.LOST);
+      }, ANIMATION_DURATION * COLUMNS);
     }
   }, [answer, guesses, props, setGameStatus, tentativeGuess]);
 
