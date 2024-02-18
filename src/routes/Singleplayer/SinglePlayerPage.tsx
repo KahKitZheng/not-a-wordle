@@ -15,7 +15,7 @@ export default function SingleplayerPage() {
     name: "Player 1",
     status: "running",
     guesses: [] as string[],
-    isReady: true,
+    isReady: "ready",
     isAdmin: true,
     isWinner: false,
   };
@@ -24,6 +24,8 @@ export default function SingleplayerPage() {
     setUserId(id);
     setGameMode("single");
     setAnswer(getNewWord(words));
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

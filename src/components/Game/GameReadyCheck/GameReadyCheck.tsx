@@ -13,9 +13,7 @@ type GameReadyCheckProps = {
 
 export default function GameReadyCheck(props: GameReadyCheckProps) {
   const { open, handleReadyCheck } = props;
-  const { players, userId } = useContext(GameContext);
-
-  const currentPlayer = players.find((player) => player.id === userId);
+  const { players } = useContext(GameContext);
 
   function getReadyState(player: Player) {
     if (player.isReady === undefined) {

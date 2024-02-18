@@ -176,6 +176,7 @@ export default function MultiplayerPage() {
   useEffect(() => {
     setUserId(id);
     setGameMode("multi");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Keep checking for a winner and update the game status
