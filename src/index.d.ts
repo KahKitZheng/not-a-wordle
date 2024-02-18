@@ -1,3 +1,5 @@
+type MatchStatus = "idle" | "ready-check" | "running" | "finished";
+
 type GameStatus = "running" | "won" | "lost" | "idle" | "prep";
 
 type Guess = {
@@ -10,6 +12,8 @@ type Player = {
   name: string;
   status: GameStatus; // might not be needed
   guesses: string[];
+  isReady: boolean;
+  isAdmin: boolean;
   isWinner: boolean;
 };
 

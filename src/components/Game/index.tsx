@@ -10,17 +10,15 @@ import { GameContext } from "../../contexts/GameContext";
 import GuessGrid from "./GuessGrid/GuessGrid";
 import GameKeyboard from "./GameKeyboard/GameKeyboard";
 import "./Game.scss";
-import RemoveIcon from "../../icons/RemoveIcon";
 
 type GameProps = {
   player: Player;
   submitMultiplayerGuess?: (guesses: string) => void;
   submitWinner?: () => void;
-  leaveRoom?: () => void;
 };
 
 export default function Game(props: GameProps) {
-  const { userId, answer, gameStatus, setGameStatus, gameMode } =
+  const { userId, answer, matchStatus, gameStatus, setGameStatus, gameMode } =
     useContext(GameContext);
   const { player } = props;
 
@@ -31,16 +29,6 @@ export default function Game(props: GameProps) {
   const validatedGuesses = guesses.map((guess) =>
     checkGuess(guess, answer),
   ) as Guess[][];
-
-  const handleLeaveRoom = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
-    e.preventDefault();
-
-    if (props.leaveRoom) {
-      props.leaveRoom();
-    }
-  };
 
   const handleSubmit = useCallback(() => {
     const nextGuesses = [...guesses, tentativeGuess];
@@ -73,6 +61,10 @@ export default function Game(props: GameProps) {
 
       const keyPress = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
       const eventKey = e.key.toUpperCase();
+
+      if (gameMode === "multi" && matchStatus !== "running") {
+        return;
+      }
 
       if (e.metaKey) {
         return;
@@ -111,9 +103,11 @@ export default function Game(props: GameProps) {
     },
     [
       cellIndex,
+      gameMode,
       gameStatus,
       guesses.length,
       handleSubmit,
+      matchStatus,
       player?.id,
       tentativeGuess,
       userId,
@@ -123,6 +117,10 @@ export default function Game(props: GameProps) {
   const handleOnClickKeyCap = useCallback(
     (letter: string) => {
       const cells = document.querySelectorAll(`.cell-${userId}`);
+
+      if (gameMode === "multi" && matchStatus !== "running") {
+        return;
+      }
 
       if (gameStatus !== GAME_STATUS.RUNNING) {
         return;
@@ -155,7 +153,16 @@ export default function Game(props: GameProps) {
       setTentativeGuess(tentativeGuess + letter.toUpperCase());
       setCellIndex((prev) => prev + 1);
     },
-    [cellIndex, gameStatus, guesses.length, handleSubmit, tentativeGuess],
+    [
+      cellIndex,
+      gameMode,
+      gameStatus,
+      guesses.length,
+      handleSubmit,
+      matchStatus,
+      tentativeGuess,
+      userId,
+    ],
   );
 
   useEffect(() => {
@@ -188,21 +195,8 @@ export default function Game(props: GameProps) {
         {gameMode === "multi" ? (
           <p className="player-name">
             {player?.name}
-            {player.id === userId ? (
-              <button
-                style={{
-                  height: "1.25rem",
-                  width: "1.25rem",
-                  marginLeft: ".5rem",
-                  backgroundColor: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                }}
-                onClick={handleLeaveRoom}
-              >
-                <RemoveIcon />
-              </button>
-            ) : null}
+            {player?.isAdmin ? " (owner)" : null}
+            {player?.isWinner ? "  🏆" : null}
           </p>
         ) : null}
         <GuessGrid

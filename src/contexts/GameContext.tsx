@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { GAME_STATUS } from "../constants";
+import { GAME_STATUS, MATCH_STATUS } from "../constants";
 import { getNewWord } from "../utils";
 import { words } from "../constants/words";
 
@@ -8,6 +8,8 @@ type GameContextType = {
   setUserId: React.Dispatch<React.SetStateAction<string>>;
   answer: string;
   setAnswer: React.Dispatch<React.SetStateAction<string>>;
+  matchStatus: MatchStatus;
+  setMatchStatus: React.Dispatch<React.SetStateAction<MatchStatus>>;
   gameStatus: GameStatus;
   setGameStatus: React.Dispatch<React.SetStateAction<GameStatus>>;
   players: Player[];
@@ -29,6 +31,9 @@ type GameContextProviderProps = {
 export const GameContextProvider = ({ children }: GameContextProviderProps) => {
   const [userId, setUserId] = useState<string>("");
   const [answer, setAnswer] = useState("");
+  const [matchStatus, setMatchStatus] = useState<MatchStatus>(
+    MATCH_STATUS.IDLE,
+  );
   const [gameStatus, setGameStatus] = useState<GameStatus>(GAME_STATUS.RUNNING);
   const [players, setPlayers] = useState<Player[]>([]);
   const [gameMode, setGameMode] = useState<GameMode>("single");
@@ -54,6 +59,8 @@ export const GameContextProvider = ({ children }: GameContextProviderProps) => {
         setUserId,
         answer,
         setAnswer,
+        matchStatus,
+        setMatchStatus,
         gameStatus,
         setGameStatus,
         players,

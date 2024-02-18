@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useBeforeUnload, useParams } from "react-router-dom";
 import { GO_AWAY_SENTINEL, SLOW_DOWN_SENTINEL } from "../../constants/partykit";
 import { GameContext } from "../../contexts/GameContext";
@@ -8,6 +8,8 @@ import Game from "../../components/Game";
 import GameSummary from "../../components/Game/GameSummary/GameSummary";
 import usePartySocket from "partysocket/react";
 import "./Multiplayer.scss";
+import GameFooter from "../../components/Game/GameFooter/GameFooter";
+import GameReadyCheck from "../../components/Game/GameReadyCheck/GameReadyCheck";
 
 // In case of custom setup, change this to your server's host
 const host = import.meta.env.PROD
@@ -23,8 +25,12 @@ export default function MultiplayerPage() {
     setPlayers,
     setGameMode,
     setAnswer,
+    matchStatus,
+    setMatchStatus,
     setGameStatus,
   } = useContext(GameContext);
+
+  const [openReadyCheck, setOpenReadyCheck] = useState(false);
 
   const id = useMemo(() => randomId(), []);
 
@@ -53,12 +59,14 @@ export default function MultiplayerPage() {
     (event: WebSocketEventMap["message"]) => {
       const message = JSON.parse(event.data);
 
-      console.log("message", message);
+      // Debugging purposes
+      // console.log("message", message);
 
       setPlayers(message.players);
       setAnswer(message.answer);
+      setMatchStatus(message.matchStatus);
     },
-    [setPlayers, setAnswer],
+    [setAnswer, setMatchStatus, setPlayers],
   );
 
   const createActionMessage = (action: {
@@ -106,6 +114,53 @@ export default function MultiplayerPage() {
     );
   }, [socket, userId]);
 
+  const handleStartReadyCheck = useCallback(() => {
+    setOpenReadyCheck(true);
+
+    socket.send(
+      JSON.stringify({
+        type: "action",
+        action: {
+          type: "init-ready-check",
+          userId: userId,
+        },
+      }),
+    );
+
+    setTimeout(() => {
+      socket.send(
+        JSON.stringify({
+          type: "action",
+          action: { type: "collect-ready-check" },
+        }),
+      );
+    }, 10000);
+  }, [socket, userId]);
+
+  const selectReadyState = useCallback(
+    (isReady: boolean) => {
+      socket.send(
+        JSON.stringify({
+          type: "action",
+          action: {
+            type: "confirm-ready",
+            userId: userId,
+            isReady: isReady,
+          },
+        }),
+      );
+    },
+    [socket, userId],
+  );
+
+  useEffect(() => {
+    setOpenReadyCheck(matchStatus === "ready-check");
+  }, [matchStatus]);
+
+  const disconnect = useCallback(() => {
+    socket.send(createActionMessage({ type: "leave", userId: id }));
+  }, [socket, id]);
+
   function renderGame(player: Player) {
     return (
       <Game
@@ -113,18 +168,11 @@ export default function MultiplayerPage() {
         player={player}
         submitMultiplayerGuess={submitMultiplayerGuess}
         submitWinner={submitWinner}
-        leaveRoom={() => {
-          socket.send(
-            createActionMessage({
-              type: "leave",
-              userId: id,
-            }),
-          );
-        }}
       />
     );
   }
 
+  // Initialize multiplayer game mode
   useEffect(() => {
     setUserId(id);
     setGameMode("multi");
@@ -148,9 +196,9 @@ export default function MultiplayerPage() {
   // Disconnects the user when they leave the page!!!
   useBeforeUnload(
     useCallback(() => {
-      socket.send(createActionMessage({ type: "leave", userId: id }));
+      disconnect();
       socket.close();
-    }, [id, socket]),
+    }, [disconnect, socket]),
   );
 
   return (
@@ -212,8 +260,18 @@ export default function MultiplayerPage() {
             </div>
           ) : null}
         </div>
+
+        <GameFooter
+          startReadyCheck={handleStartReadyCheck}
+          leaveRoom={disconnect}
+        />
       </div>
       <GameSummary />
+      <GameReadyCheck
+        open={openReadyCheck}
+        onClose={() => setOpenReadyCheck(false)}
+        handleReadyCheck={selectReadyState}
+      />
     </>
   );
 }

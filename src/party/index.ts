@@ -17,21 +17,28 @@ export default class Server implements Party.Server {
 
   players: Player[] = [];
   answer: string = "";
+  matchStatus: MatchStatus = "idle";
 
   async onStart() {
     // Load counter from storage on startup
     this.players = (await this.room.storage.get<Player[]>("players")) ?? [];
     this.answer = (await this.room.storage.get<string>("answer")) ?? "";
+    this.matchStatus =
+      (await this.room.storage.get<MatchStatus>("matchStatus")) ?? "idle";
   }
 
   async onRequest() {
     // For all HTTP request, respond with the current players
-    return json(createUpdateMessage(this.answer, this.players));
+    return json(
+      createUpdateMessage(this.answer, this.players, this.matchStatus),
+    );
   }
 
   onConnect(connection: Party.Connection) {
     // For all WebSocket connections, send the current players
-    connection.send(createUpdateMessage(this.answer, this.players));
+    connection.send(
+      createUpdateMessage(this.answer, this.players, this.matchStatus),
+    );
   }
 
   onMessage(message: string, sender: Party.Connection) {
@@ -45,9 +52,17 @@ export default class Server implements Party.Server {
   }
 
   updateAndBroadcastCount(action: {
-    type: "join" | "leave" | "guess" | "winner";
+    type:
+      | "join"
+      | "leave"
+      | "guess"
+      | "winner"
+      | "init-ready-check"
+      | "collect-ready-check"
+      | "confirm-ready";
     userId?: string;
     guess?: string;
+    isReady?: boolean;
   }) {
     // Update stored count
     if (action.type === "join") {
@@ -56,6 +71,8 @@ export default class Server implements Party.Server {
         name: "Player " + (this.players.length + 1),
         status: "running",
         guesses: [] as string[],
+        isReady: false,
+        isAdmin: this.players.length === 0 ? true : false,
         isWinner: false,
       });
 
@@ -87,12 +104,39 @@ export default class Server implements Party.Server {
       }
     }
 
+    if (action.type === "init-ready-check") {
+      this.matchStatus = "ready-check";
+    }
+
+    if (action.type === "collect-ready-check") {
+      const isEveryoneReady = this.players.every((player) => {
+        return player.isReady === true;
+      });
+
+      if (isEveryoneReady) {
+        this.matchStatus = "running";
+      } else {
+        this.matchStatus = "idle";
+      }
+    }
+
+    if (action.type === "confirm-ready") {
+      const player = this.players.find((player) => player.id === action.userId);
+
+      if (player) {
+        player.isReady = action.isReady ?? false;
+      }
+    }
+
     // Send updated count to all connected listeners
-    this.room.broadcast(createUpdateMessage(this.answer, this.players));
+    this.room.broadcast(
+      createUpdateMessage(this.answer, this.players, this.matchStatus),
+    );
 
     // Store updated count
     this.room.storage.put("players", this.players);
     this.room.storage.put("answer", this.answer);
+    this.room.storage.put("matchStatus", this.matchStatus);
   }
 }
 

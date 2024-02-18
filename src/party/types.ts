@@ -6,10 +6,15 @@ export const parseActionMessage = (message: string) => {
   return JSON.parse(message);
 };
 
-export const createUpdateMessage = (answer: string, players: Player[]) => {
+export const createUpdateMessage = (
+  answer: string,
+  players: Player[],
+  matchStatus: MatchStatus,
+) => {
   return JSON.stringify({
     type: "update",
     answer,
     players,
+    matchStatus,
   });
 };

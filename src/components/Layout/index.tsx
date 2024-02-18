@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
-import "./layout.scss";
 import { GameContextProvider } from "../../contexts/GameContext";
+import "./layout.scss";
 
 type LayoutProps = {
   children: React.ReactNode;

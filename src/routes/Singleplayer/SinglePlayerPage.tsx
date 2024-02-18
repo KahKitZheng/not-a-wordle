@@ -15,6 +15,8 @@ export default function SingleplayerPage() {
     name: "Player 1",
     status: "running",
     guesses: [] as string[],
+    isReady: true,
+    isAdmin: true,
     isWinner: false,
   };
 
