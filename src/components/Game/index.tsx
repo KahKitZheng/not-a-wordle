@@ -1,16 +1,14 @@
-import { words } from "../../constants/words";
 import {
   ANIMATION_DURATION,
   COLUMNS,
   GAME_STATUS,
   ROWS,
 } from "../../constants";
-import { checkGuess, getNewWord } from "../../utils";
+import { checkGuess } from "../../utils";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { GameContext } from "../../contexts/GameContext";
 import GuessGrid from "./GuessGrid/GuessGrid";
 import GameKeyboard from "./GameKeyboard/GameKeyboard";
-import GameSummary from "./GameSummary/GameSummary";
 import "./Game.scss";
 
 type GameProps = {
@@ -145,18 +143,6 @@ export default function Game(props: GameProps) {
     [cellIndex, gameStatus, guesses.length, handleSubmit, tentativeGuess],
   );
 
-  // const handleClose = () => {
-  //   setGameStatus(GAME_STATUS.IDLE);
-  // };
-
-  // const handleNextRound = () => {
-  //   setAnswer(getNewWord(words));
-  //   setGuesses([]);
-  //   setTentativeGuess("");
-  //   setCellIndex(0);
-  //   setGameStatus(GAME_STATUS.RUNNING);
-  // };
-
   useEffect(() => {
     if (gameMode === "single") {
       return;
@@ -165,6 +151,17 @@ export default function Game(props: GameProps) {
     setGuesses(player?.guesses ?? []);
   }, [gameMode, player?.guesses]);
 
+  // Clean up states for next round
+  useEffect(() => {
+    if (gameStatus === GAME_STATUS.PREP) {
+      setGuesses([]);
+      setTentativeGuess("");
+      setCellIndex(0);
+      setGameStatus(GAME_STATUS.RUNNING);
+    }
+  }, [gameStatus, setGameStatus]);
+
+  // Listen for keyboard events
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
@@ -188,13 +185,6 @@ export default function Game(props: GameProps) {
           />
         ) : null}
       </form>
-
-      {/* <GameSummary
-        status={gameStatus}
-        answer={answer}
-        handleClose={handleClose}
-        handleNextRound={handleNextRound}
-      /> */}
     </>
   );
 }
